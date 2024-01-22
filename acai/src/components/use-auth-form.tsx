@@ -22,8 +22,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isInvalid, setIsInvalid] = React.useState(false)
   const [isErrorDisplayed, setIsErrorDisplayed] = React.useState(false)
   const router = useRouter()
+  React.useEffect(() => {
+    isInvalidUser()
+  })
   async function isInvalidUser() {
-    if (!isInvalid && !isErrorDisplayed) {
+    if (isInvalid && !isErrorDisplayed) {
       toast({
         variant: 'destructive',
         title: 'Uh oh! Algo deu errado.',
@@ -36,7 +39,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true)
-    await isInvalidUser()
+
     const target = event.target as typeof event.target & {
       name: { value: string }
       password: { value: string }
@@ -59,6 +62,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       router.refresh()
       setIsLoading(false)
     }
+    await isInvalidUser()
   }
 
   return (
