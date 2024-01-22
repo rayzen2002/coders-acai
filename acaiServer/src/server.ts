@@ -6,6 +6,8 @@ import { loginRoute } from './routes/login'
 import fastifyCookie from '@fastify/cookie'
 import { groupRoutes } from './routes/group'
 import fastifyCors from '@fastify/cors'
+import { GetMonthRevenue } from './routes/get-month-revenue'
+import { createProduct } from './routes/create-product'
 
 dotenv.config()
 export const server = fastify()
@@ -17,6 +19,8 @@ server.register(fastifyCors, {
 server.register(fastifyJwt, {
   secret: 'supersecret',
 })
+server.register(createProduct)
+server.register(GetMonthRevenue)
 server.register(groupRoutes)
 server.register(fastifyCookie, {
   secret: 'supersecretCookie',
