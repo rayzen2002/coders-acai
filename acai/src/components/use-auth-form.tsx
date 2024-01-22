@@ -31,7 +31,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     }
 
     const loginResponse = await axios.post('/login', body, {
-      baseURL: process.env.API_HOST,
+      baseURL: 'https://coders-acai-pm2c.vercel.app',
       withCredentials: true,
     })
 
