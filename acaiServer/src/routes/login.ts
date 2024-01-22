@@ -14,27 +14,27 @@ export async function loginRoute(server: FastifyInstance) {
     try {
       const { username, password, mode } = userBodySchema.parse(req.body)
 
-      let userToLogin
+      // let userToLogin
 
-      if (mode) {
-        userToLogin = await prisma.testUser.findFirst({
-          where: { username, password },
-          include: {
-            groups: true,
-          },
-        })
-      } else {
-        userToLogin = await prisma.user.findFirst({
-          where: { username, password },
-          include: {
-            groups: true,
-          },
-        })
-        console.log(userToLogin.groups[0].groupId)
-      }
+      // if (mode) {
+      //   userToLogin = await prisma.testUser.findFirst({
+      //     where: { username, password },
+      //     include: {
+      //       groups: true,
+      //     },
+      //   })
+      // } else {
+      const userToLogin = await prisma.user.findFirst({
+        where: { username, password },
+        include: {
+          groups: true,
+        },
+      })
+      console.log(userToLogin?.groups[0].groupId)
+      // }
       const groupOfUserToLogin = await prisma.groups.findFirst({
         where: {
-          id: userToLogin.groups[0].groupId,
+          id: userToLogin?.groups[0].groupId,
         },
       })
       console.log(groupOfUserToLogin?.levelOfAccess)

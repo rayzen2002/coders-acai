@@ -14,8 +14,8 @@ export async function userRoute(server: FastifyInstance) {
       const users = await prisma.user.findMany()
       return { users }
     }
-    const testUsers = await prisma.testUser.findMany()
-    return { testUsers }
+    // const testUsers = await prisma.testUser.findMany()
+    // return { testUsers }
   })
   server.post('/user', { preHandler: auth }, async (req, res) => {
     const bodySchema = z.object({
@@ -33,13 +33,13 @@ export async function userRoute(server: FastifyInstance) {
       },
     })
 
-    const testGroups = await prisma.testGroups.findMany({
-      where: {
-        groupName: {
-          in: group,
-        },
-      },
-    })
+    // const testGroups = await prisma.testGroups.findMany({
+    //   where: {
+    //     groupName: {
+    //       in: group,
+    //     },
+    //   },
+    // })
 
     try {
       if (!mode) {
@@ -57,19 +57,19 @@ export async function userRoute(server: FastifyInstance) {
           },
         })
       } else {
-        await prisma.testUser.create({
-          data: {
-            username,
-            password,
-            groups: {
-              create: testGroups.map((group) => ({
-                groups: { connect: { id: group.id } },
-                assignedAt: new Date(),
-                assignedBy: 'admin',
-              })),
-            },
-          },
-        })
+        // await prisma.testUser.create({
+        //   data: {
+        //     username,
+        //     password,
+        //     groups: {
+        //       create: testGroups.map((group) => ({
+        //         groups: { connect: { id: group.id } },
+        //         assignedAt: new Date(),
+        //         assignedBy: 'admin',
+        //       })),
+        //     },
+        //   },
+        // })
       }
 
       res.status(201)
