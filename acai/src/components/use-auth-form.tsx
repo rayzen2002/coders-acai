@@ -43,8 +43,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     if (loginResponse.status === 401) {
       alert('Login invalido')
       router.refresh()
-      event.target.name.value = ''
-      event.target.password.value = ''
+      target.name.value = ''
+      target.password.value = ''
       setIsLoading(false)
     }
   }

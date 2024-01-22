@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card'
-import { DateRangePicker } from '../ui/date-range-picker'
+// import { DateRangePicker } from '../ui/date-range-picker'
 import { Label } from '../ui/label'
 
 const data = [
@@ -57,7 +57,7 @@ export default function RevenueChart() {
         </div>
         <div className="flex items-center gap-3">
           <Label>Período</Label>
-          <DateRangePicker />
+          {/* <DateRangePicker /> */}
         </div>
       </CardHeader>
       <CardContent>
