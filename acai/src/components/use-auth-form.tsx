@@ -1,4 +1,5 @@
 'use client'
+import 'dotenv/config'
 
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
@@ -9,7 +10,8 @@ import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
-
+import { ToastAction } from './ui/toast'
+import { toast } from './ui/use-toast'
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>
 interface authForm {
   username: string
@@ -17,10 +19,24 @@ interface authForm {
 }
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [isInvalid, setIsInvalid] = React.useState(false)
+  const [isErrorDisplayed, setIsErrorDisplayed] = React.useState(false)
   const router = useRouter()
+  async function isInvalidUser() {
+    if (!isInvalid && !isErrorDisplayed) {
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! Algo deu errado.',
+        description: 'Houve um problema com suas credenciais.',
+        action: <ToastAction altText="Try again">Tente novamente</ToastAction>,
+      })
+      setIsErrorDisplayed(true)
+    }
+  }
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true)
+    await isInvalidUser()
     const target = event.target as typeof event.target & {
       name: { value: string }
       password: { value: string }
@@ -30,21 +46,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       password: target.password.value,
     }
 
-    const loginResponse = await axios.post('/login', body, {
-      baseURL: 'https://coders-acai-pm2c.vercel.app',
-      withCredentials: true,
-    })
-
-    console.log(loginResponse)
-    if (loginResponse.status === 200) {
-      console.log('logado')
+    try {
+      await axios.post('/login', body, {
+        baseURL: process.env.NEXT_PUBLIC_API_KEY,
+        withCredentials: true,
+      })
       router.push('/dashboard')
-    }
-    if (loginResponse.status === 401) {
-      alert('Login invalido')
-      router.refresh()
-      target.name.value = ''
+    } catch (error) {
+      setIsInvalid(true)
       target.password.value = ''
+      target.name.value = ''
+      router.refresh()
       setIsLoading(false)
     }
   }
@@ -75,7 +87,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               disabled={isLoading}
             />
           </div>
-          <Button className="bg-purple-700">Entrar</Button>
+          <Button disabled={isLoading} className="bg-purple-700">
+            Entrar
+          </Button>
         </div>
       </form>
       <div className="relative">
