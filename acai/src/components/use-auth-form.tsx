@@ -11,16 +11,23 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>
-
+interface authForm {
+  username: string
+  password: string
+}
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const router = useRouter()
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true)
-    const body = {
-      username: event.target.name.value,
-      password: event.target.password.value,
+    const target = event.target as typeof event.target & {
+      name: { value: string }
+      password: { value: string }
+    }
+    const body: authForm = {
+      username: target.name.value,
+      password: target.password.value,
     }
 
     const loginResponse = await axios.post('/login', body, {
