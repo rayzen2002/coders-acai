@@ -9,7 +9,8 @@
     "services:stop": "docker compose -f infra/compose.yaml stop",
     "services:down": "docker compose -f infra/compose.yaml down",
     "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "vercel-build": "npx prisma migrate deploy"
   },
   "prisma": {
     "schema": "infra/prisma/schema.prisma"
