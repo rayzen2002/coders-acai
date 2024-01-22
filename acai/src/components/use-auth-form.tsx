@@ -31,7 +31,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     }
 
     const loginResponse = await axios.post('/login', body, {
-      baseURL: 'http://localhost:3333',
+      baseURL: process.env.API_HOST,
       withCredentials: true,
     })
 
