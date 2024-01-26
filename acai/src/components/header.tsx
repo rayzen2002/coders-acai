@@ -1,4 +1,12 @@
-import { Cherry, Home, UtensilsCrossed } from 'lucide-react'
+import {
+  Barcode,
+  Cherry,
+  Home,
+  SquareUserRound,
+  Truck,
+  Users,
+  UtensilsCrossed,
+} from 'lucide-react'
 import Link from 'next/link'
 
 import { ModeToggle } from './theme/mode-toggle'
@@ -26,6 +34,34 @@ export function Header() {
           >
             <UtensilsCrossed className="h-4 w-4" />
             Pedidos
+          </Link>
+          <Link
+            href="/customers"
+            className="flex items-center space-x-4 lg:space-x-6"
+          >
+            <Users className="h-4 w-4" />
+            Clientes
+          </Link>
+          <Link
+            href="/shipments"
+            className="flex items-center space-x-4 lg:space-x-6"
+          >
+            <Truck className="h-4 w-4" />
+            Carregamentos
+          </Link>
+          <Link
+            href="/products"
+            className="flex items-center space-x-4 lg:space-x-6"
+          >
+            <Barcode className="h-4 w-4" />
+            Produtos
+          </Link>
+          <Link
+            href="/funcionarios"
+            className="flex items-center space-x-4 lg:space-x-6"
+          >
+            <SquareUserRound className="h-4 w-4" />
+            Funcionarios
           </Link>
         </nav>
 
