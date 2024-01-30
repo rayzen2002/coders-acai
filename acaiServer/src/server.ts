@@ -7,18 +7,24 @@ import fastifyCookie from '@fastify/cookie'
 import { groupRoutes } from './routes/group'
 import fastifyCors from '@fastify/cors'
 import { GetMonthRevenue } from './routes/get-month-revenue'
+import { createCustomer } from './routes/create-customer'
+import { getProducts } from './routes/get-products'
 import { createProduct } from './routes/create-product'
+import { getCustomer } from './routes/get-customer'
 
 dotenv.config()
 export const server = fastify()
 
 server.register(fastifyCors, {
-  origin: 'https://coders-acai.vercel.app',
+  origin: 'http://localhost:3000',
   credentials: true,
 })
 server.register(fastifyJwt, {
   secret: 'supersecret',
 })
+server.register(getCustomer)
+server.register(createCustomer)
+server.register(getProducts)
 server.register(createProduct)
 server.register(GetMonthRevenue)
 server.register(groupRoutes)

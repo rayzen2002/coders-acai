@@ -9,7 +9,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["base", "tests"]
 }
 
 model User {
@@ -17,8 +16,6 @@ model User {
   username String
   password String
   groups   GroupsOfUser[]
-
-  @@schema("base")
 }
 
 model Groups {
@@ -26,19 +23,17 @@ model Groups {
   groupName     String
   levelOfAccess Int
   users         GroupsOfUser[]
-
-  @@schema("base")
 }
 
 model Customers {
-  id      String   @id @default(uuid())
-  name    String
-  email   String
-  address String
+  id            String      @id @default(uuid())
+  name          String
+  email         String
+  address       String
   // relation with orders
-  Orders  Orders[]
-
-  @@schema("base")
+  Orders        Orders[]
+  Distributor   Distributor @relation(fields: [distributorId], references: [id])
+  distributorId String
 }
 
 model Products {
@@ -48,8 +43,8 @@ model Products {
   price_in_cents Int
   // orders         ProductsOfOrder[]
   OrderItems     OrderItems[]
-
-  @@schema("base")
+  Distributor    Distributor? @relation(fields: [distributorId], references: [id])
+  distributorId  String?
 }
 
 model Orders {
@@ -61,7 +56,6 @@ model Orders {
   OrderItems     OrderItems[]
 
   // relation with orderItems, Custommers and Distributors
-  @@schema("base")
 }
 
 model OrderItems {
@@ -71,16 +65,15 @@ model OrderItems {
   orderId   String
   product   Products @relation(fields: [productId], references: [id])
   productId String
-
-  @@schema("base")
 }
 
 model Distributor {
-  id   String @id @default(uuid())
-  name String
+  id        String      @id @default(uuid())
+  name      String
+  customers Customers[]
+  products  Products[]
 
   // relation with orders customers and products
-  @@schema("base")
 }
 
 model GroupsOfUser {
@@ -92,7 +85,6 @@ model GroupsOfUser {
   assignedBy String
 
   @@id([userId, groupId])
-  @@schema("base")
 }
 
 // model ProductsOfOrder {
@@ -103,5 +95,5 @@ model GroupsOfUser {
 //   quantity   Int      @default(1)
 
 //   @@id([productsId, ordersId])
-//   @@schema("base")
+//   
 // }

@@ -4,7 +4,7 @@ import { auth } from '../../lib/auth'
 import { prisma } from '../../infra/prisma/database'
 
 export async function createProduct(server: FastifyInstance) {
-  server.post('/products', { preHandler: [auth] }, async (req, res) => {
+  server.post('/product', { preHandler: [auth] }, async (req, res) => {
     const productSchema = z.object({
       name: z.string(),
       description: z.string(),

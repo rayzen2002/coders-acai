@@ -1,6 +1,5 @@
-import { FastifyInstance, FastifyRequest, FastifyRequest } from 'fastify'
+import { FastifyInstance, FastifyRequest } from 'fastify'
 import { prisma } from '../../infra/prisma/database'
-import { randomUUID } from 'crypto'
 import { z } from 'zod'
 import { auth } from '../../lib/auth'
 
@@ -11,7 +10,15 @@ export async function userRoute(server: FastifyInstance) {
     })
     const { mode } = querySchema.parse(req.query)
     if (!mode) {
-      const users = await prisma.user.findMany()
+      const users = await prisma.user.findMany({
+        include: {
+          groups: {
+            select: {
+              groupId: true,
+            },
+          },
+        },
+      })
       return { users }
     }
     // const testUsers = await prisma.testUser.findMany()
