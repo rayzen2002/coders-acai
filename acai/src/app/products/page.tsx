@@ -1,3 +1,4 @@
+'use client'
 import axios from 'axios'
 
 import { Header } from '@/components/header'
@@ -6,11 +7,10 @@ import { columns } from './columns'
 import { DataTable, Product } from './data-table'
 
 export default async function Products() {
-  const getProductsApiCall = await axios.get('/products', {
-    baseURL: process.env.NEXT_PUBLIC_API_KEY,
-    // withCredentials: true,
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/products`, {
+    cache: 'no-cache',
   })
-  const products: Product[] = getProductsApiCall.data.products
+  const products: Product[] = await res.json()
   return (
     <>
       <Header />
