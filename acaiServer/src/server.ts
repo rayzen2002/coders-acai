@@ -11,6 +11,7 @@ import { createCustomer } from './routes/create-customer'
 import { getProducts } from './routes/get-products'
 import { createProduct } from './routes/create-product'
 import { getCustomer } from './routes/get-customer'
+import { deleteProduct } from './routes/delete-product'
 
 dotenv.config()
 export const server = fastify()
@@ -26,6 +27,7 @@ server.register(getCustomer)
 server.register(createCustomer)
 server.register(getProducts)
 server.register(createProduct)
+server.register(deleteProduct)
 server.register(GetMonthRevenue)
 server.register(groupRoutes)
 server.register(fastifyCookie, {

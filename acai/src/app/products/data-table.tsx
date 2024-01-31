@@ -9,9 +9,10 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import axios from 'axios'
 import { Plus, Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useReducer, useState } from 'react'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -33,22 +34,29 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { createProduct } from '@/lib/data/products'
-
-import { Products } from './columns'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  onNewProductAdded: () => void
+}
+interface CreateProductBodyApiCall {
+  name: string
+  description: string
+  priceInCents: number
+}
+export interface Product {
+  id: string
+  name: string
+  description: string
+  price_in_cents: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  onNewProductAdded,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [rowSelection, setRowSelection] = useState({})
   const table = useReactTable({
     data,
     columns,
@@ -56,17 +64,29 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
+      rowSelection,
     },
   })
-  const { register, handleSubmit } = useForm<Products>()
+  const { register, handleSubmit, reset } = useForm<Product>()
   const router = useRouter()
-  const rerender = useReducer(() => ({}), {})[1]
-  const onSubmit: SubmitHandler<Products> = async (data) => {
-    await createProduct(data)
-    rerender()
-    onNewProductAdded()
+  const onSubmit: SubmitHandler<Product> = async (newProduct) => {
+    const body: CreateProductBodyApiCall = {
+      name: newProduct.name,
+      description: newProduct.description,
+      priceInCents: parseInt(newProduct.price_in_cents),
+    }
+    await axios.post('/product', JSON.stringify(body), {
+      baseURL: process.env.NEXT_PUBLIC_API_KEY,
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    router.refresh()
+    reset()
   }
 
   return (
@@ -118,49 +138,30 @@ export function DataTable<TData, TValue>({
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="status" className="text-right">
-                    status
+                  <Label htmlFor="description" className="text-right">
+                    description
                   </Label>
                   <Input
-                    id="status"
-                    placeholder="status do produto"
+                    id="description"
+                    placeholder="description do produto"
                     className="col-span-3"
-                    {...register('status')}
+                    {...register('description')}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="weight" className="text-right">
-                    Peso
+                  <Label htmlFor="price_in_cents" className="text-right">
+                    Preço
                   </Label>
                   <Input
-                    id="weight"
-                    placeholder="Peso (g)"
+                    id="price_in_cents"
+                    placeholder="Preço"
                     className="col-span-3"
-                    {...register('weight')}
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="stock" className="text-right">
-                    Estoque
-                  </Label>
-                  <Input
-                    id="stock"
-                    placeholder="Qtd. em estoque"
-                    className="col-span-3"
-                    {...register('stock')}
+                    {...register('price_in_cents')}
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button
-                  type="submit"
-                  onClick={() => {
-                    alert('produto cadastrado')
-                    router.push('/products')
-                  }}
-                >
-                  Cadastrar Produto
-                </Button>
+                <Button type="submit">Cadastrar Produto</Button>
               </DialogFooter>
             </form>
           </DialogContent>

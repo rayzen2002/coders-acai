@@ -1,26 +1,16 @@
-'use client'
-import { useRouter } from 'next/navigation'
-import { useEffect, useReducer, useState } from 'react'
+import axios from 'axios'
 
 import { Header } from '@/components/header'
-import { getProducts } from '@/lib/data/products'
 
-import { columns, Products } from './columns'
-import { DataTable } from './data-table'
+import { columns } from './columns'
+import { DataTable, Product } from './data-table'
 
-export default function Products() {
-  const [products, setProducts] = useState<Products[]>([])
-  useEffect(() => {
-    getProducts().then((data) => {
-      setProducts(data)
-    })
-  }, [])
-
-  const HandleNewProductAdded = async () => {
-    const newData = await getProducts()
-    setProducts(newData)
-  }
-
+export default async function Products() {
+  const getProductsApiCall = await axios.get('/products', {
+    baseURL: process.env.NEXT_PUBLIC_API_KEY,
+    withCredentials: true,
+  })
+  const products: Product[] = getProductsApiCall.data.products
   return (
     <>
       <Header />
@@ -28,11 +18,7 @@ export default function Products() {
         <h1 className="mx-auto text-3xl py-6">Produtos</h1>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={products}
-        onNewProductAdded={HandleNewProductAdded}
-      />
+      <DataTable columns={columns} data={products} />
     </>
   )
 }

@@ -30,7 +30,6 @@ export async function loginRoute(server: FastifyInstance) {
           groups: true,
         },
       })
-      console.log(userToLogin?.groups[0].groupId)
       // }
       const groupOfUserToLogin = await prisma.groups.findFirst({
         where: {
@@ -56,7 +55,7 @@ export async function loginRoute(server: FastifyInstance) {
         httpOnly: true,
         domain: 'localhost',
         sameSite: 'none',
-        secure: true, // Change to true if running over HTTPS
+        secure: false, // Change to true if running over HTTPS
         path: '/',
       })
     } catch (error) {
