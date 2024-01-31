@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({
     }
     await axios.post('/product', JSON.stringify(body), {
       baseURL: process.env.NEXT_PUBLIC_API_KEY,
-      withCredentials: true,
+      // withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
       },

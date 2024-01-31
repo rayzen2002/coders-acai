@@ -8,7 +8,7 @@ import { DataTable, Product } from './data-table'
 export default async function Products() {
   const getProductsApiCall = await axios.get('/products', {
     baseURL: process.env.NEXT_PUBLIC_API_KEY,
-    withCredentials: true,
+    // withCredentials: true,
   })
   const products: Product[] = getProductsApiCall.data.products
   return (

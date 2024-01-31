@@ -97,8 +97,8 @@ export const columns: ColumnDef<Product>[] = [
               onClick={async () => {
                 console.log(`product/${product.id}`)
                 await axios.delete(`product/${product.id}`, {
-                  baseURL: 'http://localhost:3333',
-                  withCredentials: true,
+                  baseURL: process.env.NEXT_PUBLIC_API_KEY,
+                  // withCredentials: true,
                 })
                 location.reload()
               }}
