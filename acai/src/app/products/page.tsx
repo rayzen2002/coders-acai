@@ -8,7 +8,7 @@ import { DataTable, Product } from './data-table'
 
 export default async function Products() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/products`, {
-    cache: 'no-cache',
+    cache: 'reload',
   })
   const products: Product[] = await res.json()
   return (
