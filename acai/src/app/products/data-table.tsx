@@ -48,7 +48,7 @@ export interface Product {
   id: string
   name: string
   description: string
-  price_in_cents: string
+  priceInCents: number
 }
 
 export function DataTable<TData, TValue>({
@@ -76,7 +76,7 @@ export function DataTable<TData, TValue>({
     const body: CreateProductBodyApiCall = {
       name: newProduct.name,
       description: newProduct.description,
-      priceInCents: parseInt(newProduct.price_in_cents),
+      priceInCents: newProduct.priceInCents,
     }
     await axios.post('/product', JSON.stringify(body), {
       baseURL: process.env.NEXT_PUBLIC_API_KEY,
