@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table'
 import axios from 'axios'
 import { Plus, Search } from 'lucide-react'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -34,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import action from '@/lib/api/actions'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -49,6 +51,12 @@ export interface Product {
   name: string
   description: string
   priceInCents: number
+}
+interface ProductForm {
+  id: string
+  name: string
+  description: string
+  priceInCents: string
 }
 
 export function DataTable<TData, TValue>({
@@ -70,22 +78,25 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   })
-  const { register, handleSubmit, reset } = useForm<Product>()
-  const router = useRouter()
-  const onSubmit: SubmitHandler<Product> = async (newProduct) => {
+  const { register, handleSubmit, reset } = useForm<ProductForm>()
+  const onSubmit: SubmitHandler<ProductForm> = async (newProduct) => {
     const body: CreateProductBodyApiCall = {
       name: newProduct.name,
       description: newProduct.description,
-      priceInCents: newProduct.priceInCents,
+      priceInCents: parseInt(newProduct.priceInCents),
     }
-    await axios.post('/product', JSON.stringify(body), {
-      baseURL: process.env.NEXT_PUBLIC_API_KEY,
-      // withCredentials: true,
+
+    await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/product`, {
+      method: 'POST',
+      body: JSON.stringify(body),
       headers: {
         'Content-Type': 'application/json',
       },
+      next: {
+        tags: ['products'],
+      },
     })
-    router.refresh()
+    action()
     reset()
   }
 

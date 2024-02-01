@@ -15,6 +15,7 @@ export default async function Products() {
     {
       next: {
         revalidate: 1,
+        tags: ['products'],
       },
     },
   )

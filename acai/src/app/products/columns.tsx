@@ -2,6 +2,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import axios from 'axios'
 import { MoreHorizontal } from 'lucide-react'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -13,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import action from '@/lib/api/actions'
 
 import { Product } from './data-table'
 
@@ -95,11 +97,11 @@ export const columns: ColumnDef<Product>[] = [
             <DropdownMenuItem
               className="text-red-500"
               onClick={async () => {
-                console.log(`product/${product.id}`)
                 await axios.delete(`product/${product.id}`, {
                   baseURL: process.env.NEXT_PUBLIC_API_KEY,
                   // withCredentials: true,
                 })
+                action()
                 location.reload()
               }}
             >
