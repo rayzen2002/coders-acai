@@ -156,7 +156,7 @@ export function DataTable<TData, TValue>({
                     id="price_in_cents"
                     placeholder="Preço"
                     className="col-span-3"
-                    {...register('price_in_cents')}
+                    {...register('priceInCents')}
                   />
                 </div>
               </div>
