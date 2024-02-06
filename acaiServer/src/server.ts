@@ -16,6 +16,7 @@ import { deleteCustomer } from './routes/delete-customers'
 import { getDistributor } from './routes/get-distributor'
 import { createShipment } from './routes/create-shipment'
 import { getShipment } from './routes/get-shipments'
+import { deleteShipment } from './routes/delete-shipment'
 
 dotenv.config()
 export const server = fastify()
@@ -47,6 +48,7 @@ server.register(getDistributor)
 
 server.register(createShipment)
 server.register(getShipment)
+server.register(deleteShipment)
 
 server.listen({ port: 3333 }).then(() => {
   console.log(`${process.env.DATABASE_URL}`)
