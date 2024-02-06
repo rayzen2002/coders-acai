@@ -21,7 +21,7 @@ export interface Shipments {
   origin: string
   destiny: string
   fuelPriceInCents: number
-  userId: string | null
+  // userId: string | null
 }
 export interface ShipmentsApi {
   shipments: {
@@ -134,6 +134,9 @@ export const column: ColumnDef<Shipments>[] = [
               onClick={async () => {
                 await fetch(
                   `${process.env.NEXT_PUBLIC_API_KEY}/shipments/${shipment.id}`,
+                  {
+                    method: 'DELETE',
+                  },
                 )
                 action('shipments')
               }}

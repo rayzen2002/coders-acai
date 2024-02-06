@@ -11,7 +11,6 @@ export default async function Shipments() {
       origin: 'Belem-PA',
       destiny: 'Sobral-CE',
       fuelPriceInCents: 10000,
-      userId: null,
     },
     {
       id: '6666',
@@ -19,7 +18,6 @@ export default async function Shipments() {
       origin: 'Tailandia-PA',
       destiny: 'Sobral-CE',
       fuelPriceInCents: 15000,
-      userId: null,
     },
     {
       id: '9999',
@@ -27,7 +25,6 @@ export default async function Shipments() {
       origin: 'Amazonas-AM',
       destiny: 'Sobral-CE',
       fuelPriceInCents: 8000,
-      userId: null,
     },
   ]
   const getProductsApiCall: ShipmentsApi = await fetch(

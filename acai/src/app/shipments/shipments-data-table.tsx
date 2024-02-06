@@ -44,6 +44,20 @@ import action from '@/lib/api/actions'
 
 import { Shipments, ShipmentsApi } from './columns'
 
+interface ShipmentForm {
+  id: string
+  temperature: string
+  origin: string
+  destiny: string
+  fuelPriceInCents: string
+  userId: string | null
+}
+interface Shipment {
+  temperature: number
+  origin: string
+  destiny: string
+  fuelPriceInCents: number
+}
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -75,13 +89,16 @@ export function ShipmentsDataTable<TData, TValue>({
       rowSelection,
     },
   })
-  const { register, handleSubmit, reset } = useForm<Shipments>()
-  const onSubmit: SubmitHandler<Shipments> = async (newShipment) => {
-    const body = {
-      ...newShipment,
+  const { register, handleSubmit, reset } = useForm<ShipmentForm>()
+  const onSubmit: SubmitHandler<ShipmentForm> = async (newShipment) => {
+    const body: Shipment = {
+      destiny: newShipment.destiny,
+      origin: newShipment.origin,
+      temperature: parseFloat(newShipment.temperature),
+      fuelPriceInCents: parseFloat(newShipment.fuelPriceInCents),
     }
     console.log(body)
-    const xd = await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/shipment`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/shipment`, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
