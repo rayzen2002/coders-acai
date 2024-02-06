@@ -76,7 +76,6 @@ export function CustomersDataTable<TData, TValue>({
     const body = {
       ...newCustomer,
     }
-    console.log(body)
     await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/customer`, {
       body: JSON.stringify(body),
       method: 'POST',

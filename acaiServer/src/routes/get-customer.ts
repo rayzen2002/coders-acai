@@ -3,7 +3,7 @@ import { auth } from '../../lib/auth'
 import { prisma } from '../../infra/prisma/database'
 
 export async function getCustomer(server: FastifyInstance) {
-  server.get('/customer', { preHandler: [auth] }, async (req, res) => {
+  server.get('/customers', { preHandler: [auth] }, async (req, res) => {
     // const productSchema = z.object({
     //   name: z.string(),
     //   description: z.string(),
@@ -11,8 +11,8 @@ export async function getCustomer(server: FastifyInstance) {
     // })
     // const product = productSchema.parse(req.body)
     try {
-      const customer = await prisma.customers.findMany()
-      return { customer }
+      const customers = await prisma.customers.findMany()
+      return { customers }
     } catch (error) {
       console.error(error)
       res.status(409)

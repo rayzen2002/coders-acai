@@ -26,7 +26,6 @@ export default async function Products() {
       return data
     })
   const products: Product[] = getProductsApiCall.products
-  console.log(products)
   return (
     <>
       <Header />

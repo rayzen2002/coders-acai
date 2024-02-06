@@ -12,12 +12,14 @@ import { getProducts } from './routes/get-products'
 import { createProduct } from './routes/create-product'
 import { getCustomer } from './routes/get-customer'
 import { deleteProduct } from './routes/delete-product'
+import { deleteCustomer } from './routes/delete-customers'
+import { getDistributor } from './routes/get-distributor'
 
 dotenv.config()
 export const server = fastify()
 
 server.register(fastifyCors, {
-  origin: 'https://coders-acai.vercel.app',
+  origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
   credentials: true,
 })
 server.register(fastifyJwt, {
@@ -25,6 +27,7 @@ server.register(fastifyJwt, {
 })
 server.register(getCustomer)
 server.register(createCustomer)
+server.register(deleteCustomer)
 server.register(getProducts)
 server.register(createProduct)
 server.register(deleteProduct)
@@ -38,7 +41,8 @@ server.register(fastifyCookie, {
 })
 server.register(loginRoute)
 server.register(userRoute)
+server.register(getDistributor)
 
 server.listen({ port: 3333 }).then(() => {
-  console.log(`Server running on port 3333`)
+  console.log(`${process.env.DATABASE_URL}`)
 })
