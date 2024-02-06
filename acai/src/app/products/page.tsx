@@ -25,7 +25,6 @@ export default async function Products() {
     .then((data) => {
       return data
     })
-  console.log(getProductsApiCall)
   const products: Product[] = getProductsApiCall.products
   console.log(products)
   return (

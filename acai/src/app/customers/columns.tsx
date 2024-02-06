@@ -1,4 +1,5 @@
 'use client'
+
 import { ColumnDef } from '@tanstack/react-table'
 import axios from 'axios'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
@@ -15,19 +16,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import action from '@/lib/api/actions'
 
-import { Product } from './data-table'
+import { Customers } from './page'
 
-export type Products = {
-  products: {
-    id: string
-    name: string
-    description: string
-    priceInCents: number
-    distributorId: string | null
-  }[]
-}
-
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<Customers>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -69,32 +60,42 @@ export const columns: ColumnDef<Product>[] = [
     header: 'name',
   },
   {
-    accessorKey: 'description',
-    header: 'description',
-  },
-  {
-    accessorKey: 'price_in_cents',
+    accessorKey: 'email',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Preço
+          Email
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => {
-      const priceInCents: number = row.getValue('price_in_cents')
-      const formated = `${priceInCents} R$`
-      return <div>{formated}</div>
+  },
+  {
+    accessorKey: 'address',
+    header: 'endereço',
+  },
+
+  {
+    accessorKey: 'distributorId',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Distribuidor
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
     },
   },
   {
     id: 'actions',
     cell: ({ row }) => {
-      const product = row.original
+      const customer = row.original
 
       return (
         <DropdownMenu>
@@ -107,20 +108,20 @@ export const columns: ColumnDef<Product>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
+              onClick={() => navigator.clipboard.writeText(customer.id)}
             >
-              Copiar ID do Produto
+              Copiar ID do Cliente
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Estatísticas</DropdownMenuItem>
             <DropdownMenuItem
               className="text-red-500"
               onClick={async () => {
-                await axios.delete(`product/${product.id}`, {
+                await axios.delete(`customer/${customer.id}`, {
                   baseURL: process.env.NEXT_PUBLIC_API_KEY,
                   // withCredentials: true,
                 })
-                action('products')
+                action('customers')
                 location.reload()
               }}
             >

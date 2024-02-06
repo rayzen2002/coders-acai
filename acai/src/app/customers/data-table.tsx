@@ -1,5 +1,5 @@
 'use client'
-
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -11,12 +11,10 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import axios from 'axios'
-import { Plus, Search } from 'lucide-react'
-import { revalidatePath, revalidateTag } from 'next/cache'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { PlusCircle } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -29,6 +27,13 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -43,103 +48,106 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
-interface CreateProductBodyApiCall {
-  name: string
-  description: string
-  priceInCents: number
-}
-export interface Product {
+interface FormCustomers {
   id: string
   name: string
-  description: string
-  priceInCents: number
+  email: string
+  address: string
+  distributorName: string
 }
-interface ProductForm {
+interface Distributor {
   id: string
   name: string
-  description: string
-  priceInCents: string
+  // Add other properties if needed
 }
 
-export function DataTable<TData, TValue>({
+export function CustomersDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [distributors, setDistributors] = useState<Distributor[]>([])
+  const { register, handleSubmit, reset, control } = useForm<FormCustomers>()
+  const onSubmit: SubmitHandler<FormCustomers> = async (
+    newCustomer: FormCustomers,
+  ) => {
+    const body = {
+      ...newCustomer,
+    }
+    console.log(body)
+    await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/customer`, {
+      body: JSON.stringify(body),
+      method: 'POST',
+      next: {
+        revalidate: 1,
+        tags: ['customers'],
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    action('customers')
+    reset()
+  }
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     state: {
+      sorting,
       columnFilters,
       rowSelection,
-      sorting,
     },
   })
-  const { register, handleSubmit, reset } = useForm<ProductForm>()
-  const onSubmit: SubmitHandler<ProductForm> = async (newProduct) => {
-    const body: CreateProductBodyApiCall = {
-      name: newProduct.name,
-      description: newProduct.description,
-      priceInCents: parseInt(newProduct.priceInCents),
-    }
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/product`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: {
-        tags: ['products'],
-      },
-    })
-    action('products')
-    reset()
-  }
-
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_KEY}/distributors`)
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        setDistributors(data.distributors)
+      })
+  }, [])
   return (
-    <div>
-      <div className="flex gap-4 mx-auto justify-center items-center">
+    <div className="px-4">
+      <div className="flex gap-4 mx-auto justify-center items-center my-6">
         <Input
-          placeholder="ID"
-          className="w-32"
+          placeholder="Filtrar por id..."
           value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => {
+          onChange={(event) =>
             table.getColumn('id')?.setFilterValue(event.target.value)
-          }}
+          }
+          className="max-w-sm"
         />
         <Input
-          placeholder="Nome do Produto"
-          className="w-52"
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => {
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }}
+          placeholder="Filtrar por email..."
+          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          onChange={(event) =>
+            table.getColumn('email')?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
         />
-        <Button variant="ghost">
-          <Search />
-          Filtrar Resultados
-        </Button>
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline">
-              <Plus className="w-4 h-4" />
-              Novo Produto
+            <Button variant="outline" className="gap-1">
+              <PlusCircle className="w-4 h-4" />
+              Novo Cliente
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Produto</DialogTitle>
+              <DialogTitle>Cliente</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid gap-4 py-4">
@@ -149,31 +157,66 @@ export function DataTable<TData, TValue>({
                   </Label>
                   <Input
                     id="name"
-                    placeholder="Nome do produto"
+                    placeholder="Nome do Cliente"
                     className="col-span-3"
                     {...register('name')}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="description" className="text-right">
-                    description
+                  <Label htmlFor="email" className="text-right">
+                    email
                   </Label>
                   <Input
-                    id="description"
-                    placeholder="description do produto"
+                    id="email"
+                    placeholder="Email do cliente"
                     className="col-span-3"
-                    {...register('description')}
+                    {...register('email')}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="price_in_cents" className="text-right">
-                    Preço
+                  <Label htmlFor="address" className="text-right">
+                    Endereço
                   </Label>
                   <Input
-                    id="price_in_cents"
-                    placeholder="Preço"
+                    id="address"
+                    placeholder="Endereço do cliente"
                     className="col-span-3"
-                    {...register('priceInCents')}
+                    {...register('address')}
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="distributorName" className="text-right">
+                    Distribuidor
+                  </Label>
+
+                  {/* <Select>
+                    <SelectTrigger
+                      id="distributorName"
+                      className="w-[180px]"
+                      {...register('distributorName')}
+                    >
+                      <SelectValue
+                        placeholder="Distribuidor"
+                        accessKey="distributorName"
+                      />
+                      <SelectContent {...register('distributorName')}>
+                        {distributors.map((distributor: Distributor) => {
+                          return (
+                            <SelectItem
+                              value={distributor.name}
+                              key={distributor.id}
+                            >
+                              {distributor.name}
+                            </SelectItem>
+                          )
+                        })}
+                      </SelectContent>
+                    </SelectTrigger>
+                  </Select> */}
+                  <Input
+                    {...register('distributorName')}
+                    placeholder="Distribuidor"
+                    className="col-span-3"
                   />
                 </div>
               </div>
@@ -184,7 +227,7 @@ export function DataTable<TData, TValue>({
           </DialogContent>
         </Dialog>
       </div>
-      <div className="rounded-md border mt-8 mx-4">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -235,6 +278,10 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} de{' '}
+          {table.getFilteredRowModel().rows.length} linhas(s) selecionadas.
+        </div>
         <Button
           variant="outline"
           size="sm"
