@@ -13,55 +13,55 @@
 
 */
 -- DropForeignKey
-ALTER TABLE "acai"."Customers" DROP CONSTRAINT "Customers_distributorId_fkey";
+ALTER TABLE "public"."Customers" DROP CONSTRAINT "Customers_distributorId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "acai"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_groupId_fkey";
+ALTER TABLE "public"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_groupId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "acai"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_userId_fkey";
+ALTER TABLE "public"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_userId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "acai"."OrderItems" DROP CONSTRAINT "OrderItems_orderId_fkey";
+ALTER TABLE "public"."OrderItems" DROP CONSTRAINT "OrderItems_orderId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "acai"."OrderItems" DROP CONSTRAINT "OrderItems_productId_fkey";
+ALTER TABLE "public"."OrderItems" DROP CONSTRAINT "OrderItems_productId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "acai"."Orders" DROP CONSTRAINT "Orders_customerId_fkey";
+ALTER TABLE "public"."Orders" DROP CONSTRAINT "Orders_customerId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "acai"."Products" DROP CONSTRAINT "Products_distributorId_fkey";
+ALTER TABLE "public"."Products" DROP CONSTRAINT "Products_distributorId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "acai"."Shipment" DROP CONSTRAINT "Shipment_userId_fkey";
+ALTER TABLE "public"."Shipment" DROP CONSTRAINT "Shipment_userId_fkey";
 
 -- DropTable
-DROP TABLE "acai"."Customers";
+DROP TABLE "public"."Customers";
 
 -- DropTable
-DROP TABLE "acai"."Distributor";
+DROP TABLE "public"."Distributor";
 
 -- DropTable
-DROP TABLE "acai"."Groups";
+DROP TABLE "public"."Groups";
 
 -- DropTable
-DROP TABLE "acai"."GroupsOfUser";
+DROP TABLE "public"."GroupsOfUser";
 
 -- DropTable
-DROP TABLE "acai"."OrderItems";
+DROP TABLE "public"."OrderItems";
 
 -- DropTable
-DROP TABLE "acai"."Orders";
+DROP TABLE "public"."Orders";
 
 -- DropTable
-DROP TABLE "acai"."Products";
+DROP TABLE "public"."Products";
 
 -- DropTable
-DROP TABLE "acai"."Shipment";
+DROP TABLE "public"."Shipment";
 
 -- DropTable
-DROP TABLE "acai"."User";
+DROP TABLE "public"."User";
 
 -- CreateTable
 CREATE TABLE "User" (
