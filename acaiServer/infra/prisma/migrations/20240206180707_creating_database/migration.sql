@@ -75,6 +75,21 @@ CREATE TABLE "GroupsOfUser" (
     CONSTRAINT "GroupsOfUser_pkey" PRIMARY KEY ("userId","groupId")
 );
 
+-- CreateTable
+CREATE TABLE "Shipment" (
+    "id" TEXT NOT NULL,
+    "temperature" INTEGER NOT NULL,
+    "origin" TEXT NOT NULL,
+    "destiny" TEXT NOT NULL,
+    "fuelPriceInCents" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Shipment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Shipment_userId_key" ON "Shipment"("userId");
+
 -- AddForeignKey
 ALTER TABLE "Customers" ADD CONSTRAINT "Customers_distributorId_fkey" FOREIGN KEY ("distributorId") REFERENCES "Distributor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -95,3 +110,6 @@ ALTER TABLE "GroupsOfUser" ADD CONSTRAINT "GroupsOfUser_userId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "GroupsOfUser" ADD CONSTRAINT "GroupsOfUser_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Shipment" ADD CONSTRAINT "Shipment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

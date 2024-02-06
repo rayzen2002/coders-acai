@@ -14,6 +14,8 @@ import { getCustomer } from './routes/get-customer'
 import { deleteProduct } from './routes/delete-product'
 import { deleteCustomer } from './routes/delete-customers'
 import { getDistributor } from './routes/get-distributor'
+import { createShipment } from './routes/create-shipment'
+import { getShipment } from './routes/get-shipments'
 
 dotenv.config()
 export const server = fastify()
@@ -42,6 +44,9 @@ server.register(fastifyCookie, {
 server.register(loginRoute)
 server.register(userRoute)
 server.register(getDistributor)
+
+server.register(createShipment)
+server.register(getShipment)
 
 server.listen({ port: 3333 }).then(() => {
   console.log(`${process.env.DATABASE_URL}`)

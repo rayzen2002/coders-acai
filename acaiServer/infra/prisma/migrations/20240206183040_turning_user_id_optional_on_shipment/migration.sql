@@ -8,53 +8,60 @@
   - You are about to drop the `OrderItems` table. If the table is not empty, all the data it contains will be lost.
   - You are about to drop the `Orders` table. If the table is not empty, all the data it contains will be lost.
   - You are about to drop the `Products` table. If the table is not empty, all the data it contains will be lost.
+  - You are about to drop the `Shipment` table. If the table is not empty, all the data it contains will be lost.
   - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
 
 */
 -- DropForeignKey
-ALTER TABLE "public"."Customers" DROP CONSTRAINT "Customers_distributorId_fkey";
+ALTER TABLE "acai"."Customers" DROP CONSTRAINT "Customers_distributorId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_groupId_fkey";
+ALTER TABLE "acai"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_groupId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_userId_fkey";
+ALTER TABLE "acai"."GroupsOfUser" DROP CONSTRAINT "GroupsOfUser_userId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."OrderItems" DROP CONSTRAINT "OrderItems_orderId_fkey";
+ALTER TABLE "acai"."OrderItems" DROP CONSTRAINT "OrderItems_orderId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."OrderItems" DROP CONSTRAINT "OrderItems_productId_fkey";
+ALTER TABLE "acai"."OrderItems" DROP CONSTRAINT "OrderItems_productId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."Orders" DROP CONSTRAINT "Orders_customerId_fkey";
+ALTER TABLE "acai"."Orders" DROP CONSTRAINT "Orders_customerId_fkey";
 
 -- DropForeignKey
-ALTER TABLE "public"."Products" DROP CONSTRAINT "Products_distributorId_fkey";
+ALTER TABLE "acai"."Products" DROP CONSTRAINT "Products_distributorId_fkey";
+
+-- DropForeignKey
+ALTER TABLE "acai"."Shipment" DROP CONSTRAINT "Shipment_userId_fkey";
 
 -- DropTable
-DROP TABLE "public"."Customers";
+DROP TABLE "acai"."Customers";
 
 -- DropTable
-DROP TABLE "public"."Distributor";
+DROP TABLE "acai"."Distributor";
 
 -- DropTable
-DROP TABLE "public"."Groups";
+DROP TABLE "acai"."Groups";
 
 -- DropTable
-DROP TABLE "public"."GroupsOfUser";
+DROP TABLE "acai"."GroupsOfUser";
 
 -- DropTable
-DROP TABLE "public"."OrderItems";
+DROP TABLE "acai"."OrderItems";
 
 -- DropTable
-DROP TABLE "public"."Orders";
+DROP TABLE "acai"."Orders";
 
 -- DropTable
-DROP TABLE "public"."Products";
+DROP TABLE "acai"."Products";
 
 -- DropTable
-DROP TABLE "public"."User";
+DROP TABLE "acai"."Shipment";
+
+-- DropTable
+DROP TABLE "acai"."User";
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -133,6 +140,21 @@ CREATE TABLE "GroupsOfUser" (
     CONSTRAINT "GroupsOfUser_pkey" PRIMARY KEY ("userId","groupId")
 );
 
+-- CreateTable
+CREATE TABLE "Shipment" (
+    "id" TEXT NOT NULL,
+    "temperature" INTEGER NOT NULL,
+    "origin" TEXT NOT NULL,
+    "destiny" TEXT NOT NULL,
+    "fuelPriceInCents" INTEGER NOT NULL,
+    "userId" TEXT,
+
+    CONSTRAINT "Shipment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Shipment_userId_key" ON "Shipment"("userId");
+
 -- AddForeignKey
 ALTER TABLE "Customers" ADD CONSTRAINT "Customers_distributorId_fkey" FOREIGN KEY ("distributorId") REFERENCES "Distributor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -153,3 +175,6 @@ ALTER TABLE "GroupsOfUser" ADD CONSTRAINT "GroupsOfUser_userId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "GroupsOfUser" ADD CONSTRAINT "GroupsOfUser_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Shipment" ADD CONSTRAINT "Shipment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

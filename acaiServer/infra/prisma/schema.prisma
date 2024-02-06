@@ -16,6 +16,7 @@ model User {
   username String
   password String
   groups   GroupsOfUser[]
+  shipment Shipment?
 }
 
 model Groups {
@@ -87,13 +88,13 @@ model GroupsOfUser {
   @@id([userId, groupId])
 }
 
-// model ProductsOfOrder {
-//   Products   Products @relation(fields: [productsId], references: [id])
-//   productsId String
-//   Orders     Orders   @relation(fields: [ordersId], references: [id])
-//   ordersId   String
-//   quantity   Int      @default(1)
+model Shipment {
+  id               String @id @default(uuid())
+  temperature      Int
+  origin           String
+  destiny          String
+  fuelPriceInCents Int
 
-//   @@id([productsId, ordersId])
-//   
-// }
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @unique()
+}
