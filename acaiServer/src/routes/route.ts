@@ -11,14 +11,32 @@ export async function userRoute(server: FastifyInstance) {
     const { mode } = querySchema.parse(req.query)
     if (!mode) {
       const users = await prisma.user.findMany({
+        // include: {
+        //   groups: {
+        //     include: {
+        //       groups: {
+        //         select: {
+        //           groupName: true,
+        //           levelOfAccess: true,
+        //         },
+        //       },
+        //     },
+        //   },
+        // },
         include: {
           groups: {
-            select: {
-              groupId: true,
+            include: {
+              groups: {
+                select: {
+                  groupName: true,
+                  levelOfAccess: true,
+                },
+              },
             },
           },
         },
       })
+
       return { users }
     }
     // const testUsers = await prisma.testUser.findMany()

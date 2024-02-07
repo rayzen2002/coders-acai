@@ -11,12 +11,19 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { PlusCircle } from 'lucide-react'
+import { Check, PlusCircle, Store } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command'
 import {
   Dialog,
   DialogContent,
@@ -25,8 +32,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -42,7 +62,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
+import { cn } from '@/lib/utils'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -69,27 +91,46 @@ export function CustomersDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
   const [distributors, setDistributors] = useState<Distributor[]>([])
-  const { register, handleSubmit, reset, control } = useForm<FormCustomers>()
+  const form = useForm<FormCustomers>()
   const onSubmit: SubmitHandler<FormCustomers> = async (
     newCustomer: FormCustomers,
   ) => {
     const body = {
       ...newCustomer,
     }
-    await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/customer`, {
-      body: JSON.stringify(body),
-      method: 'POST',
-      next: {
-        revalidate: 1,
-        tags: ['customers'],
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    action('customers')
-    reset()
+    try {
+      const createCustomer = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/customer`,
+        {
+          body: JSON.stringify(body),
+          method: 'POST',
+          next: {
+            revalidate: 1,
+            tags: ['customers'],
+          },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      if (createCustomer.ok) {
+        toast({
+          className: 'bg-green-700',
+          title: 'Cadastro realizado com sucesso!',
+        })
+        action('customers')
+        form.reset()
+      } else {
+        throw new Error('Erro na requisição')
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro no cadastro!',
+        description:
+          'Não foi possível cadastrar o Cliente, verifique as credenciais',
+      })
+    }
   }
   const table = useReactTable({
     data,
@@ -148,81 +189,116 @@ export function CustomersDataTable<TData, TValue>({
             <DialogHeader>
               <DialogTitle>Cliente</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Nome do Cliente"
-                    className="col-span-3"
-                    {...register('name')}
-                  />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Name
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="Nome do Cliente"
+                      className="col-span-3"
+                      {...form.register('name')}
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      email
+                    </Label>
+                    <Input
+                      id="email"
+                      placeholder="Email do cliente"
+                      className="col-span-3"
+                      {...form.register('email')}
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="address" className="text-right">
+                      Endereço
+                    </Label>
+                    <Input
+                      id="address"
+                      placeholder="Endereço do cliente"
+                      className="col-span-3"
+                      {...form.register('address')}
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <FormField
+                      control={form.control}
+                      name="distributorName"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col w-full">
+                          <div className="flex items-center gap-4">
+                            <FormLabel>Distribuidor</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={cn(
+                                      'w-[400px] justify-between',
+                                      !field.value && 'text-muted-foreground',
+                                    )}
+                                  >
+                                    {field.value
+                                      ? distributors.find(
+                                          (distributor) =>
+                                            distributor.name === field.value,
+                                        )?.name
+                                      : 'Selecione um distibuidor'}
+                                    <Store className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[200px] p-0">
+                                <Command>
+                                  <CommandInput placeholder="Procure um distribuidor..." />
+                                  <CommandEmpty>
+                                    Nenhum distribuidor encontrado.
+                                  </CommandEmpty>
+                                  <CommandGroup>
+                                    {distributors.map((distributor) => (
+                                      <CommandItem
+                                        value={distributor.name}
+                                        key={distributor.id}
+                                        onSelect={() => {
+                                          form.setValue(
+                                            'distributorName',
+                                            distributor.name,
+                                          )
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            'mr-2 h-4 w-4',
+                                            distributor.name === field.value
+                                              ? 'opacity-100'
+                                              : 'opacity-0',
+                                          )}
+                                        />
+                                        {distributor.name}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">
-                    email
-                  </Label>
-                  <Input
-                    id="email"
-                    placeholder="Email do cliente"
-                    className="col-span-3"
-                    {...register('email')}
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="address" className="text-right">
-                    Endereço
-                  </Label>
-                  <Input
-                    id="address"
-                    placeholder="Endereço do cliente"
-                    className="col-span-3"
-                    {...register('address')}
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="distributorName" className="text-right">
-                    Distribuidor
-                  </Label>
-
-                  {/* <Select>
-                    <SelectTrigger
-                      id="distributorName"
-                      className="w-[180px]"
-                      {...register('distributorName')}
-                    >
-                      <SelectValue
-                        placeholder="Distribuidor"
-                        accessKey="distributorName"
-                      />
-                      <SelectContent {...register('distributorName')}>
-                        {distributors.map((distributor: Distributor) => {
-                          return (
-                            <SelectItem
-                              value={distributor.name}
-                              key={distributor.id}
-                            >
-                              {distributor.name}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </SelectTrigger>
-                  </Select> */}
-                  <Input
-                    {...register('distributorName')}
-                    placeholder="Distribuidor"
-                    className="col-span-3"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Cadastrar Produto</Button>
-              </DialogFooter>
-            </form>
+                <DialogFooter>
+                  <Button type="submit">Cadastrar Cliente</Button>
+                </DialogFooter>
+              </form>
+            </Form>
           </DialogContent>
         </Dialog>
       </div>

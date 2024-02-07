@@ -8,7 +8,6 @@ export async function deleteCustomer(server: FastifyInstance) {
     const customerParamsSchema = z.object({
       id: z.string(),
     })
-    console.log(req.params)
     const customer = customerParamsSchema.parse(req.params)
     try {
       await prisma.customers.delete({
@@ -20,6 +19,5 @@ export async function deleteCustomer(server: FastifyInstance) {
       console.error(error)
       res.status(409)
     }
-    console.log('oiee')
   })
 }

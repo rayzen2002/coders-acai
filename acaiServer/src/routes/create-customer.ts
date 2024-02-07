@@ -12,16 +12,14 @@ export async function createCustomer(server: FastifyInstance) {
       distributorName: z.string(),
     })
     const customer = customerSchema.parse(req.body)
-    console.log(customer)
     const distributor = await prisma.distributor.findFirst({
       where: {
         name: customer.distributorName,
       },
     })
-    console.log(distributor)
     try {
-      if (distributor) {
-        const xd = await prisma.customers.create({
+      if (customer && distributor) {
+        await prisma.customers.create({
           data: {
             name: customer.name,
             email: customer.email,
@@ -29,7 +27,8 @@ export async function createCustomer(server: FastifyInstance) {
             distributorId: distributor.id,
           },
         })
-        console.log(xd)
+      } else {
+        throw new Error('Dados inválidos')
       }
     } catch (error) {
       console.error(error)

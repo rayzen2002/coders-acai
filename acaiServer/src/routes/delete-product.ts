@@ -8,7 +8,6 @@ export async function deleteProduct(server: FastifyInstance) {
     const productParamsSchema = z.object({
       id: z.string(),
     })
-    console.log(req.params)
     const product = productParamsSchema.parse(req.params)
     try {
       await prisma.products.delete({
@@ -20,6 +19,5 @@ export async function deleteProduct(server: FastifyInstance) {
       console.error(error)
       res.status(409)
     }
-    console.log('oiee')
   })
 }

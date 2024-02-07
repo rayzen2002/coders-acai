@@ -51,6 +51,7 @@ export default async function Customers() {
     .then((data) => {
       return data
     })
+
   return (
     <>
       <Header />

@@ -51,5 +51,5 @@ server.register(getShipment)
 server.register(deleteShipment)
 
 server.listen({ port: 3333 }).then(() => {
-  console.log(`${process.env.DATABASE_URL}`)
+  console.log(`🚀 HTTP Server running on port: 3333 🚀`)
 })
