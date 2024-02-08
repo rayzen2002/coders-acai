@@ -43,6 +43,7 @@ CREATE TABLE "Orders" (
     "id" TEXT NOT NULL,
     "total_in_cents" INTEGER NOT NULL,
     "customerId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Orders_pkey" PRIMARY KEY ("id")
 );
@@ -82,7 +83,7 @@ CREATE TABLE "Shipment" (
     "origin" TEXT NOT NULL,
     "destiny" TEXT NOT NULL,
     "fuelPriceInCents" INTEGER NOT NULL,
-    "userId" TEXT NOT NULL,
+    "userId" TEXT,
 
     CONSTRAINT "Shipment_pkey" PRIMARY KEY ("id")
 );
@@ -112,4 +113,4 @@ ALTER TABLE "GroupsOfUser" ADD CONSTRAINT "GroupsOfUser_userId_fkey" FOREIGN KEY
 ALTER TABLE "GroupsOfUser" ADD CONSTRAINT "GroupsOfUser_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Groups"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Shipment" ADD CONSTRAINT "Shipment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Shipment" ADD CONSTRAINT "Shipment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

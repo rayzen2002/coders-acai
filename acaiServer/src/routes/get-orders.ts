@@ -5,11 +5,15 @@ import { prisma } from '../../infra/prisma/database'
 export async function getOrders(server: FastifyInstance) {
   server.get('/orders', { preHandler: [auth] }, async (req, res) => {
     try {
-      const orders = await prisma.orders.findMany({
-        include: {
-          OrderItems: true,
-        },
-      })
+      const orders = await prisma.orders
+        .findMany
+        //   {
+        //   include: {
+        //     OrderItems: true,
+        //   },
+        // }
+        ()
+      console.log(orders)
       return { orders }
     } catch (error) {
       console.error(error)
