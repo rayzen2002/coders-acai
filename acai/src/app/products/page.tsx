@@ -9,7 +9,7 @@ interface FakeProducts {
   id: string
   name: string
   description: string
-  priceInCents: number
+  price_in_cents: number
   distributorId: string | null
 }
 const createRandomProduct = (): FakeProducts => {
@@ -18,7 +18,7 @@ const createRandomProduct = (): FakeProducts => {
     description: faker.commerce.productDescription(),
     distributorId: faker.company.name(),
     name: faker.commerce.productName(),
-    priceInCents: faker.number.int({ min: 1000, max: 5000 }),
+    price_in_cents: faker.number.int({ min: 1000, max: 5000 }),
   }
 }
 

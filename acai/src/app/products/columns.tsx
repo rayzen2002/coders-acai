@@ -22,7 +22,7 @@ export type Products = {
     id: string
     name: string
     description: string
-    priceInCents: number
+    price_in_cents: number
     distributorId: string | null
   }[]
 }

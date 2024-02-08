@@ -46,19 +46,19 @@ interface DataTableProps<TData, TValue> {
 interface CreateProductBodyApiCall {
   name: string
   description: string
-  priceInCents: number
+  price_in_cents: number
 }
 export interface Product {
   id: string
   name: string
   description: string
-  priceInCents: number
+  price_in_cents: number
 }
 interface ProductForm {
   id: string
   name: string
   description: string
-  priceInCents: string
+  price_in_cents: string
 }
 
 export function DataTable<TData, TValue>({
@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
     const body: CreateProductBodyApiCall = {
       name: newProduct.name,
       description: newProduct.description,
-      priceInCents: parseInt(newProduct.priceInCents),
+      price_in_cents: parseInt(newProduct.price_in_cents),
     }
 
     await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/product`, {
@@ -169,7 +169,7 @@ export function DataTable<TData, TValue>({
                     id="price_in_cents"
                     placeholder="Preço"
                     className="col-span-3"
-                    {...register('priceInCents')}
+                    {...register('price_in_cents')}
                   />
                 </div>
               </div>
