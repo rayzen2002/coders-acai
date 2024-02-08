@@ -10,19 +10,7 @@ export async function userRoute(server: FastifyInstance) {
     })
     const { mode } = querySchema.parse(req.query)
     if (!mode) {
-      const users = await prisma.user.findMany({
-        // include: {
-        //   groups: {
-        //     include: {
-        //       groups: {
-        //         select: {
-        //           groupName: true,
-        //           levelOfAccess: true,
-        //         },
-        //       },
-        //     },
-        //   },
-        // },
+      const usersDb = await prisma.user.findMany({
         include: {
           groups: {
             include: {
@@ -36,73 +24,69 @@ export async function userRoute(server: FastifyInstance) {
           },
         },
       })
-
+      const users = usersDb.map((user) => {
+        return {
+          id: user.id,
+          username: user.username,
+          groups: user.groups.map((group) => {
+            return {
+              groupName: group.groups.groupName,
+              levelOfAccess: group.groups.levelOfAccess,
+            }
+          }),
+        }
+      })
       return { users }
     }
-    // const testUsers = await prisma.testUser.findMany()
-    // return { testUsers }
   })
-  server.post('/user', { preHandler: auth }, async (req, res) => {
-    const bodySchema = z.object({
-      password: z.string(),
-      mode: z.string().optional(),
-      username: z.string(),
-      group: z.string().array(),
-    })
-    const { password, mode, username, group } = bodySchema.parse(req.body)
-    const groups = await prisma.groups.findMany({
-      where: {
-        groupName: {
-          in: group,
-        },
-      },
-    })
-
-    // const testGroups = await prisma.testGroups.findMany({
-    //   where: {
-    //     groupName: {
-    //       in: group,
-    //     },
-    //   },
-    // })
-
-    try {
-      if (!mode) {
-        await prisma.user.create({
-          data: {
-            username,
-            password,
-            groups: {
-              create: groups.map((group) => ({
-                groups: { connect: { id: group.id } },
-                assignedAt: new Date(),
-                assignedBy: 'admin',
-              })),
-            },
+  server.post(
+    '/user',
+    { preHandler: auth },
+    async (req: FastifyRequest, res) => {
+      const bodySchema = z.object({
+        password: z.string(),
+        mode: z.string().optional(),
+        username: z.string(),
+        group: z.string().array(),
+      })
+      const { password, username, group } = bodySchema.parse(
+        JSON.parse(req.body),
+      )
+      const groups = await prisma.groups.findMany({
+        where: {
+          groupName: {
+            in: group,
           },
-        })
-      } else {
-        // await prisma.testUser.create({
-        //   data: {
-        //     username,
-        //     password,
-        //     groups: {
-        //       create: testGroups.map((group) => ({
-        //         groups: { connect: { id: group.id } },
-        //         assignedAt: new Date(),
-        //         assignedBy: 'admin',
-        //       })),
-        //     },
-        //   },
-        // })
-      }
+        },
+      })
 
-      res.status(201)
-    } catch (error) {
-      console.error(error)
-      res.status(409)
-    }
-  })
+      console.log(groups)
+      console.log(password)
+      try {
+        if (groups[0].groupName) {
+          await prisma.user.create({
+            data: {
+              username,
+              password,
+              groups: {
+                create: groups.map((group) => ({
+                  groups: { connect: { id: group.id } },
+                  assignedAt: new Date(),
+                  assignedBy: 'admin',
+                })),
+              },
+            },
+          })
+        } else {
+          throw new Error()
+        }
+        res.status(201)
+      } catch (error) {
+        console.error(error)
+        res.status(409).send('Grupo inexistente')
+      }
+    },
+  )
   server.get('/user/:id', { preHandler: auth }, async (req, res) => {
     const paramsSchema = z.object({
       id: z.string().uuid(),

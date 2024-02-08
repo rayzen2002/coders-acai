@@ -97,7 +97,6 @@ export function ShipmentsDataTable<TData, TValue>({
       temperature: parseFloat(newShipment.temperature),
       fuelPriceInCents: parseFloat(newShipment.fuelPriceInCents),
     }
-    console.log(body)
     await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/shipment`, {
       method: 'POST',
       body: JSON.stringify(body),

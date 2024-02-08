@@ -125,10 +125,6 @@ export function DataTable<TData, TValue>({
             table.getColumn('name')?.setFilterValue(event.target.value)
           }}
         />
-        <Button variant="ghost">
-          <Search />
-          Filtrar Resultados
-        </Button>
 
         <Dialog>
           <DialogTrigger asChild>

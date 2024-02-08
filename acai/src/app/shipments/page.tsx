@@ -43,7 +43,6 @@ export default async function Shipments() {
       return data
     })
   const shipments = getProductsApiCall.shipments
-  console.log(shipments)
   return (
     <>
       <Header />
