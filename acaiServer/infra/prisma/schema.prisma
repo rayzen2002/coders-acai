@@ -53,7 +53,7 @@ model Orders {
   total_in_cents Int
   customer       Customers    @relation(fields: [customerId], references: [id])
   customerId     String
-  // products       ProductsOfOrder[]
+  createdAt      DateTime     @default(now())
   OrderItems     OrderItems[]
 
   // relation with orderItems, Custommers and Distributors

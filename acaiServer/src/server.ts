@@ -18,6 +18,7 @@ import { createShipment } from './routes/create-shipment'
 import { getShipment } from './routes/get-shipments'
 import { deleteShipment } from './routes/delete-shipment'
 import { deleteUser } from './routes/delete-product copy'
+import { getOrders } from './routes/get-orders'
 
 dotenv.config()
 export const server = fastify()
@@ -52,6 +53,7 @@ server.register(getShipment)
 server.register(deleteShipment)
 
 server.register(deleteUser)
+server.register(getOrders)
 
 server.listen({ port: 3333 }).then(() => {
   console.log(`🚀 HTTP Server running on port: 3333 🚀`)
