@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { UserSquare } from 'lucide-react'
 
 import { Header } from '@/components/header'
 
@@ -56,7 +57,10 @@ export default async function Customers() {
     <>
       <Header />
       <div className="flex flex-col">
-        <h1 className="mx-auto text-3xl py-6">Clientes</h1>
+        <h1 className="mx-auto text-3xl py-6 flex gap-2 items-center text-muted-foreground font-bold">
+          <UserSquare className="w-12 h-12" />
+          Clientes
+        </h1>
       </div>
 
       <CustomersDataTable

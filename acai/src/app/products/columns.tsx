@@ -86,9 +86,13 @@ export const columns: ColumnDef<Product>[] = [
       )
     },
     cell: ({ row }) => {
-      const priceInCents: number = row.getValue('price_in_cents')
-      const formated = `${priceInCents} R$`
-      return <div>{formated}</div>
+      const amount = parseFloat(row.getValue('price_in_cents')) / 100
+      const formatted = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(amount)
+
+      return <div className="font-medium">{formatted}</div>
     },
   },
   {

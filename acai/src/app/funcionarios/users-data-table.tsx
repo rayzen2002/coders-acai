@@ -85,6 +85,7 @@ export function UsersDataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [groups, setGroups] = useState<GroupAPI[]>([])
+  const [rowSelection, setRowSelection] = useState({})
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(usersFormSchema),
@@ -141,14 +142,16 @@ export function UsersDataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onRowSelectionChange: setRowSelection,
     state: {
       columnFilters,
+      rowSelection,
     },
   })
   return (
     <div>
       <div className="flex gap-4 justify-center items-center">
-        <div className="flex items-center py-4">
+        <div className="flex items-center">
           <Input
             placeholder="Filtrar por ids..."
             value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
@@ -337,7 +340,11 @@ export function UsersDataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-end space-x-2">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} de{' '}
+          {table.getFilteredRowModel().rows.length} linha(s) selecionadas.
+        </div>
         <Button
           variant="outline"
           size="sm"

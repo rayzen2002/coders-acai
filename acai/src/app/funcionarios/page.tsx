@@ -1,3 +1,6 @@
+import { faker } from '@faker-js/faker'
+import { Users } from 'lucide-react'
+
 import { Header } from '@/components/header'
 
 import { columns, Functionary } from './columns'
@@ -15,38 +18,28 @@ interface UsersAPI {
   users: EmployesAPI[]
 }
 export default async function Funcionarios() {
-  const funcionarios: Functionary[] = [
-    {
-      id: '3333',
-      username: 'Funcionario A',
+  const createRandomUser = (): Functionary => {
+    return {
+      id: faker.string.uuid(),
+      username: faker.person.fullName(),
       groups: [
         {
-          groupName: 'Grupo A',
-          levelOfAccess: 5,
+          groupName: faker.person.jobTitle(),
+          levelOfAccess: faker.number.int({ min: 1, max: 4 }),
         },
       ],
-    },
-    {
-      id: '6666',
-      username: 'Funcionario B',
-      groups: [
-        {
-          groupName: 'Grupo B',
-          levelOfAccess: 5,
-        },
-      ],
-    },
-    {
-      id: '9999',
-      username: 'Funcionario C',
-      groups: [
-        {
-          groupName: 'Grupo C',
-          levelOfAccess: 5,
-        },
-      ],
-    },
-  ]
+
+      // id: faker.string.uuid(),
+      // name: faker.person.fullName(),
+      // email: faker.internet.email(),
+      // address: faker.location.streetAddress(),
+      // distributorId: faker.company.name(),
+    }
+  }
+  const randomUsers = faker.helpers.multiple(createRandomUser, {
+    count: 5,
+  })
+
   const getEmployeesApiCall = await fetch(
     `${process.env.NEXT_PUBLIC_API_KEY}/users`,
     {
@@ -60,13 +53,20 @@ export default async function Funcionarios() {
   return (
     <>
       <Header />
-      <div>
-        <h1>Funcionarios</h1>
+      <div className="flex flex-col">
+        <div className="flex justify-center items-center">
+          <h1 className="mx-auto text-3xl py-6 flex gap-2 items-center text-muted-foreground font-bold">
+            <Users className="w-12 h-12" />
+            Funcionários
+          </h1>
+        </div>
       </div>
-      <UsersDataTable
-        columns={columns}
-        data={[...funcionarios, ...employees.users]}
-      />
+      <div className="px-6">
+        <UsersDataTable
+          columns={columns}
+          data={[...randomUsers, ...employees.users]}
+        />
+      </div>
     </>
   )
 }

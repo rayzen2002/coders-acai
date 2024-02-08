@@ -160,7 +160,7 @@ export function CustomersDataTable<TData, TValue>({
   }, [])
   return (
     <div className="px-4">
-      <div className="flex gap-4 mx-auto justify-center items-center my-6">
+      <div className="flex gap-2 mx-auto justify-center items-center my-6">
         <Input
           placeholder="Filtrar por id..."
           value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
@@ -352,7 +352,7 @@ export function CustomersDataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-end space-x-2 py-2">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} de{' '}
           {table.getFilteredRowModel().rows.length} linhas(s) selecionadas.

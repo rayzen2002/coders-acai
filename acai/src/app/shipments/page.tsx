@@ -1,32 +1,26 @@
+import { faker } from '@faker-js/faker'
+import { Truck } from 'lucide-react'
+
 import { Header } from '@/components/header'
 
 import { column, Shipments, ShipmentsApi } from './columns'
 import { ShipmentsDataTable } from './shipments-data-table'
 
 export default async function Shipments() {
-  const data: Shipments[] = [
-    {
-      id: '3333',
-      temperature: 20,
-      origin: 'Belem-PA',
-      destiny: 'Sobral-CE',
-      fuelPriceInCents: 10000,
-    },
-    {
-      id: '6666',
-      temperature: 15,
-      origin: 'Tailandia-PA',
-      destiny: 'Sobral-CE',
-      fuelPriceInCents: 15000,
-    },
-    {
-      id: '9999',
-      temperature: -5,
-      origin: 'Amazonas-AM',
-      destiny: 'Sobral-CE',
-      fuelPriceInCents: 8000,
-    },
-  ]
+  const createRandomShipment = (): Shipments => {
+    return {
+      id: faker.string.uuid(),
+      temperature: faker.number.float({ min: -10, max: 30, fractionDigits: 2 }),
+      origin: faker.location.city(),
+      destiny: faker.location.city(),
+      fuelPriceInCents: faker.number.int({ min: 10000, max: 100000 }),
+    }
+  }
+
+  const randomShipments = faker.helpers.multiple(createRandomShipment, {
+    count: 5,
+  })
+
   const getProductsApiCall: ShipmentsApi = await fetch(
     `${process.env.NEXT_PUBLIC_API_KEY}/shipments`,
     {
@@ -47,9 +41,15 @@ export default async function Shipments() {
     <>
       <Header />
       <div className="flex flex-col">
-        <h1 className="mx-auto text-3xl py-6">Carregamentos</h1>
+        <h1 className="mx-auto text-3xl py-6 flex gap-2 items-center text-muted-foreground font-bold">
+          <Truck className="w-12 h-12" />
+          Carregamentos
+        </h1>
       </div>
-      <ShipmentsDataTable data={[...data, ...shipments]} columns={column} />
+      <ShipmentsDataTable
+        data={[...randomShipments, ...shipments]}
+        columns={column}
+      />
     </>
   )
 }

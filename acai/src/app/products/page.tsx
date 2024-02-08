@@ -1,15 +1,31 @@
-import axios from 'axios'
+import { faker } from '@faker-js/faker'
 
 import { Header } from '@/components/header'
 
 import { columns, Products } from './columns'
 import { DataTable, Product } from './data-table'
 
+interface FakeProducts {
+  id: string
+  name: string
+  description: string
+  priceInCents: number
+  distributorId: string | null
+}
+const createRandomProduct = (): FakeProducts => {
+  return {
+    id: faker.string.uuid(),
+    description: faker.commerce.productDescription(),
+    distributorId: faker.company.name(),
+    name: faker.commerce.productName(),
+    priceInCents: faker.number.int({ min: 1000, max: 5000 }),
+  }
+}
+
+const randomProducts = faker.helpers.multiple(createRandomProduct, {
+  count: 5,
+})
 export default async function Products() {
-  // const getProductsApiCall = await axios.get('/products', {
-  //   baseURL: process.env.NEXT_PUBLIC_API_KEY,
-  //   // withCredentials: true,
-  // })
   const getProductsApiCall: Products = await fetch(
     `${process.env.NEXT_PUBLIC_API_KEY}/products`,
     {
@@ -33,7 +49,7 @@ export default async function Products() {
         <h1 className="mx-auto text-3xl py-6">Produtos</h1>
       </div>
 
-      <DataTable columns={columns} data={products} />
+      <DataTable columns={columns} data={[...randomProducts, ...products]} />
     </>
   )
 }
