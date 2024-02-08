@@ -37,21 +37,21 @@ const randomCustommers = faker.helpers.multiple(createRandomCustomer, {
 })
 
 export default async function Customers() {
-  const apiCustomers: ApiCustomers = await fetch(
-    `${process.env.NEXT_PUBLIC_API_KEY}/customers`,
-    {
-      next: {
-        revalidate: 1,
-        tags: ['customers'],
-      },
-    },
-  )
-    .then((response) => {
-      return response.json()
-    })
-    .then((data) => {
-      return data
-    })
+  // const apiCustomers: ApiCustomers = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_KEY}/customers`,
+  //   {
+  //     next: {
+  //       revalidate: 1,
+  //       tags: ['customers'],
+  //     },
+  //   },
+  // )
+  //   .then((response) => {
+  //     return response.json()
+  //   })
+  //   .then((data) => {
+  //     return data
+  //   })
 
   return (
     <>
@@ -63,10 +63,7 @@ export default async function Customers() {
         </h1>
       </div>
 
-      <CustomersDataTable
-        columns={columns}
-        data={[...randomCustommers, ...apiCustomers.customers]}
-      />
+      <CustomersDataTable columns={columns} data={[...randomCustommers]} />
     </>
   )
 }

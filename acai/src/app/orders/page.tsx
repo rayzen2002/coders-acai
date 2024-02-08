@@ -7,18 +7,18 @@ import { columns, Orders } from './columns'
 import { OrderDataTable } from './order-data-table'
 
 export default async function Shipments() {
-  const getOrdersApi = await fetch(
-    `${process.env.NEXT_PUBLIC_API_KEY}/orders`,
-    {
-      next: {
-        revalidate: 1,
-        tags: ['orders'],
-      },
-    },
-  )
-  const getOrders = await getOrdersApi.json()
-  console.log(getOrders.orders[0].OrderItems)
-  const orders = getOrders.orders
+  // const getOrdersApi = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_KEY}/orders`,
+  //   {
+  //     next: {
+  //       revalidate: 1,
+  //       tags: ['orders'],
+  //     },
+  //   },
+  // )
+  // const getOrders = await getOrdersApi.json()
+  // console.log(getOrders.orders[0].OrderItems)
+  // const orders = getOrders.orders
   const forders = [
     {
       id: faker.string.uuid(),
@@ -60,7 +60,7 @@ export default async function Shipments() {
           Pedidos
         </h1>
       </div>
-      <OrderDataTable data={orders} columns={columns} />
+      {/* <OrderDataTable data={forders} columns={columns} /> */}
     </>
   )
 }
