@@ -1,11 +1,15 @@
 'use client'
-
 import { DialogTitle } from '@radix-ui/react-dialog'
 import { PopoverContent } from '@radix-ui/react-popover'
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
+import axios from 'axios'
+import { formatDate, formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale/pt-BR'
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { useEffect } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -13,6 +17,14 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverTrigger } from '@/components/ui/popover'
@@ -25,9 +37,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import action from '@/lib/api/actions'
 
 import { Product } from '../products/data-table'
-type Customer = {
+export type Customer = {
   id: string
   name: string
   email: string
@@ -35,24 +48,84 @@ type Customer = {
   distributorId: string
 }
 type OrderItems = {
+  id: string
   quantity: number
   orderId: string
   productId: string
-  product: Product
 }
 
 export type Orders = {
   id: string
   total_in_cents: number
   orderId: string
-  orderItem: OrderItems[]
   customerId: string
+  orderItem: OrderItems[]
+  customer: Customer
+  createdAt: Date
+}
+const getProducts = (productId: string) => {
+  return fetch(`${process.env.NEXT_PUBLIC_API_KEY}/products/${productId}`, {
+    cache: 'force-cache',
+    next: {
+      tags: ['products'],
+    },
+  })
+    .then((productReturn) => {
+      if (!productReturn.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return productReturn.json()
+    })
+    .then((product) => {
+      if (product) {
+        return product
+      } else {
+        throw new Error('Product not found')
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching product:', error)
+      throw error
+    })
 }
 
 export const columns: ColumnDef<Orders>[] = [
   {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'id',
     header: 'id',
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Data da compra',
+    cell: ({ row }) => {
+      const date: Date = row.getValue('createdAt')
+      const formattedDate = formatDate(date, "dd 'de' MMMM 'de' yyyy", {
+        locale: ptBR,
+      })
+      return <div>{formattedDate}</div>
+    },
   },
   {
     accessorKey: 'total_in_cents',
@@ -82,8 +155,9 @@ export const columns: ColumnDef<Orders>[] = [
     header: 'Items',
     cell: ({ row }) => {
       const orderItems: OrderItems[] = row.getValue('OrderItems')
-      console.log(`orderItems:  ${orderItems}`)
-      // const xd = orderItems?.map((orderItem) => {
+      const customer: Customer = row.getValue('customer')
+      const date: Date = row.getValue('createdAt')
+      const price: number = row.getValue('total_in_cents')
       return (
         <div className="flex py-2 ">
           <Dialog>
@@ -92,7 +166,7 @@ export const columns: ColumnDef<Orders>[] = [
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Pedido: 1827fy2827d6h</DialogTitle>
+                <DialogTitle>Pedido:</DialogTitle>
                 <DialogDescription>Detalhes do pedido</DialogDescription>
               </DialogHeader>
 
@@ -101,31 +175,18 @@ export const columns: ColumnDef<Orders>[] = [
                   <TableBody>
                     <TableRow>
                       <TableCell className="text-muted-foreground">
-                        Status
-                      </TableCell>
-                      <TableCell className="flex justify-end">
-                        <div className="flex items-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-slate-400" />
-                          <span className="font-medium text-muted-foreground">
-                            Pendente
-                          </span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="text-muted-foreground">
                         Cliente
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        Diego Schell Fernandes
+                        {customer.name}
                       </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell className="text-muted-foreground">
-                        Telefone
+                        Endereço
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        (47) 99999-9999
+                        {customer.address}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -133,7 +194,7 @@ export const columns: ColumnDef<Orders>[] = [
                         E-mail
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        diego@rocketseat.com.br
+                        {customer.email}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -141,7 +202,10 @@ export const columns: ColumnDef<Orders>[] = [
                         Realizado há
                       </TableCell>
                       <TableCell className="flex justify-end">
-                        há 3 minutos
+                        {formatDistanceToNow(date, {
+                          addSuffix: true,
+                          locale: ptBR,
+                        })}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -157,24 +221,44 @@ export const columns: ColumnDef<Orders>[] = [
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    <TableRow>
-                      <TableCell>Pizza Pepperoni Família</TableCell>
-                      <TableCell className="text-right">2</TableCell>
-                      <TableCell className="text-right">R$ 69,90</TableCell>
-                      <TableCell className="text-right">R$ 139,80</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Pizza Mussarela Família</TableCell>
-                      <TableCell className="text-right">2</TableCell>
-                      <TableCell className="text-right">R$ 59,90</TableCell>
-                      <TableCell className="text-right">R$ 119,80</TableCell>
-                    </TableRow>
+                    {Promise.all(
+                      orderItems.map((orderItem) =>
+                        getProducts(orderItem.productId).then((product) => {
+                          return (
+                            <TableRow key={orderItem.id}>
+                              <TableCell>{product?.name}</TableCell>
+                              <TableCell className="text-right">
+                                {orderItem.quantity}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {new Intl.NumberFormat('pt-BR', {
+                                  style: 'currency',
+                                  currency: 'BRL',
+                                }).format(product.price_in_cents / 100)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {new Intl.NumberFormat('pt-BR', {
+                                  style: 'currency',
+                                  currency: 'BRL',
+                                }).format(
+                                  orderItem.quantity *
+                                    (product.price_in_cents / 100),
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          )
+                        }),
+                      ),
+                    )}
                   </TableBody>
                   <TableFooter>
                     <TableRow>
                       <TableCell colSpan={3}>Total do pedido</TableCell>
                       <TableCell className="text-right font-medium">
-                        R$ 259,60
+                        {new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL',
+                        }).format(price / 100)}
                       </TableCell>
                     </TableRow>
                   </TableFooter>
@@ -187,7 +271,52 @@ export const columns: ColumnDef<Orders>[] = [
     },
   },
   {
-    accessorKey: 'customerId',
+    accessorKey: 'customer',
     header: 'Cliente',
+    cell: ({ row }) => {
+      const costumer = row.getValue<Customer>('customer')?.name
+      return <div>{costumer}</div>
+    },
+    filterFn: 'equals',
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => {
+      const order = row.original
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(order.id)}
+            >
+              Copiar ID do Pedido
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            {/* <DropdownMenuItem>View customer</DropdownMenuItem> */}
+            <DropdownMenuItem
+              className="text-red-500"
+              onClick={async () => {
+                await axios.delete(`orders/${order.id}`, {
+                  baseURL: process.env.NEXT_PUBLIC_API_KEY,
+                  // withCredentials: true,
+                })
+                action('orders')
+                location.reload()
+              }}
+            >
+              Deletar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    },
   },
 ]

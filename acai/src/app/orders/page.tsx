@@ -7,18 +7,18 @@ import { columns, Orders } from './columns'
 import { OrderDataTable } from './order-data-table'
 
 export default async function Shipments() {
-  // const getOrdersApi = await fetch(
-  //   `${process.env.NEXT_PUBLIC_API_KEY}/orders`,
-  //   {
-  //     next: {
-  //       revalidate: 1,
-  //       tags: ['orders'],
-  //     },
-  //   },
-  // )
-  // const getOrders = await getOrdersApi.json()
-  // console.log(getOrders.orders[0].OrderItems)
-  // const orders = getOrders.orders
+  const getOrdersApi = await fetch(
+    `${process.env.NEXT_PUBLIC_API_KEY}/orders`,
+    {
+      next: {
+        revalidate: 1,
+        tags: ['orders'],
+      },
+    },
+  )
+  const getOrders = await getOrdersApi.json()
+  // console.log(getOrders.orders)
+  const orders: Orders[] = getOrders.orders
   const forders = [
     {
       id: faker.string.uuid(),
@@ -28,11 +28,11 @@ export default async function Shipments() {
         fractionDigits: 2,
       }),
       orderId: faker.string.uuid(),
-      customerId: faker.string.uuid(),
+      customerId: faker.person.fullName(),
     },
     {
       id: faker.string.uuid(),
-      customerId: faker.string.uuid(),
+      customerId: faker.person.fullName(),
       total_in_cents: faker.number.float({
         min: 100,
         max: 10000,
@@ -42,7 +42,7 @@ export default async function Shipments() {
     },
     {
       id: faker.string.uuid(),
-      customerId: faker.string.uuid(),
+      customerId: faker.person.fullName(),
       total_in_cents: faker.number.float({
         min: 100,
         max: 10000,
@@ -60,7 +60,7 @@ export default async function Shipments() {
           Pedidos
         </h1>
       </div>
-      {/* <OrderDataTable data={forders} columns={columns} /> */}
+      <OrderDataTable data={orders} columns={columns} />
     </>
   )
 }
