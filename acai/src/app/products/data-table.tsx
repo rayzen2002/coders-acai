@@ -91,7 +91,7 @@ export function DataTable<TData, TValue>({
       description: newProduct.description,
       price_in_cents: parseInt(newProduct.price_in_cents),
     }
-
+    console.log(JSON.stringify(body))
     await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/product`, {
       method: 'POST',
       body: JSON.stringify(body),

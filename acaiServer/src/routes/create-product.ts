@@ -8,7 +8,7 @@ export async function createProduct(server: FastifyInstance) {
     const productSchema = z.object({
       name: z.string(),
       description: z.string(),
-      priceInCents: z.number(),
+      price_in_cents: z.number(),
     })
     const product = productSchema.parse(req.body)
     try {
@@ -16,7 +16,7 @@ export async function createProduct(server: FastifyInstance) {
         data: {
           name: product.name,
           description: product.description,
-          price_in_cents: product.priceInCents,
+          price_in_cents: product.price_in_cents,
         },
       })
     } catch (error) {
