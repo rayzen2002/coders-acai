@@ -182,7 +182,7 @@ export function OrderDataTable<TData, TValue>({
                                     {field.value
                                       ? distributors.find(
                                           (distributor) =>
-                                            distributor.name === field.value,
+                                            distributor?.name === field.value,
                                         )?.name
                                       : 'Selecione um distibuidor'}
                                     <Store className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -198,24 +198,24 @@ export function OrderDataTable<TData, TValue>({
                                   <CommandGroup>
                                     {distributors.map((distributor) => (
                                       <CommandItem
-                                        value={distributor.name}
+                                        value={distributor?.name}
                                         key={distributor.id}
                                         onSelect={() => {
                                           form.setValue(
                                             'distributorName',
-                                            distributor.name,
+                                            distributor?.name,
                                           )
                                         }}
                                       >
                                         <Check
                                           className={cn(
                                             'mr-2 h-4 w-4',
-                                            distributor.name === field.value
+                                            distributor?.name === field.value
                                               ? 'opacity-100'
                                               : 'opacity-0',
                                           )}
                                         />
-                                        {distributor.name}
+                                        {distributor?.name}
                                       </CommandItem>
                                     ))}
                                   </CommandGroup>
