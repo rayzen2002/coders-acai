@@ -20,6 +20,7 @@ import { deleteShipment } from './routes/delete-shipment'
 import { deleteUser } from './routes/delete-user'
 import { getOrders } from './routes/get-orders'
 import { deleteOrder } from './routes/delete-order'
+import { createDistributor } from './routes/create-distributors'
 
 dotenv.config()
 export const server = fastify()
@@ -34,9 +35,11 @@ server.register(fastifyJwt, {
 server.register(getCustomer)
 server.register(createCustomer)
 server.register(deleteCustomer)
+
 server.register(getProducts)
 server.register(createProduct)
 server.register(deleteProduct)
+
 server.register(GetMonthRevenue)
 server.register(groupRoutes)
 server.register(fastifyCookie, {
@@ -47,7 +50,9 @@ server.register(fastifyCookie, {
 })
 server.register(loginRoute)
 server.register(userRoute)
+
 server.register(getDistributor)
+server.register(createDistributor)
 
 server.register(createShipment)
 server.register(getShipment)
