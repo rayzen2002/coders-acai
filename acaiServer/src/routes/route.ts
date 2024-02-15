@@ -49,9 +49,7 @@ export async function userRoute(server: FastifyInstance) {
         username: z.string(),
         group: z.string().array(),
       })
-      const { password, username, group } = bodySchema.parse(
-        JSON.parse(req.body),
-      )
+      const { password, username, group } = bodySchema.parse(req.body)
       const groups = await prisma.groups.findMany({
         where: {
           groupName: {
