@@ -10,7 +10,8 @@
     "services:down": "docker compose -f infra/compose.yaml down",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "vercel-build": "npx prisma generate && npx prisma migrate deploy"
+    "vercel-build": "npx prisma generate && npx prisma migrate deploy",
+    "seed": "tsx src/utils/seed.ts"
   },
   "prisma": {
     "schema": "infra/prisma/schema.prisma"
@@ -19,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@rocketseat/eslint-config": "^2.1.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.5",
@@ -32,6 +34,7 @@
     "@fastify/cors": "^8.5.0",
     "@fastify/jwt": "^7.2.4",
     "@prisma/client": "^5.7.1",
+    "chalk": "^5.3.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "fastify": "^4.25.1",
