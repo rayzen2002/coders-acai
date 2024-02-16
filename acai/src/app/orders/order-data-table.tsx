@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Check, MoreHorizontal, PlusCircle, Store } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -75,12 +75,18 @@ export function OrderDataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
-  const distributors = [
-    {
-      id: '46ded87b-3a4c-4d78-927f-5fa3af43a031',
-      name: 'philipemonstro',
-    },
-  ]
+  const [distributors, setDistributors] = useState([])
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_KEY}/distributors`)
+      .then((response) => {
+        return response.json()
+      })
+      .then((data) => {
+        setDistributors(data.distributors)
+      })
+  }, [])
+  console.log(distributors)
   const form = useForm()
   const onSubmit = () => {
     console.log('TODO')
