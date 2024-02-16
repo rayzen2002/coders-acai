@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 
 import { Customers } from './page'
@@ -117,12 +118,26 @@ export const columns: ColumnDef<Customers>[] = [
             <DropdownMenuItem
               className="text-red-500"
               onClick={async () => {
-                await axios.delete(`customer/${customer.id}`, {
-                  baseURL: process.env.NEXT_PUBLIC_API_KEY,
-                  // withCredentials: true,
-                })
+                try {
+                  await axios.delete(`customer/${customer.id}`, {
+                    baseURL: process.env.NEXT_PUBLIC_API_KEY,
+                    // withCredentials: true,
+                  })
+                  toast({
+                    variant: 'default',
+                    title: 'Cliente deletado com sucesso!',
+                    description: `O Cliente ${row.getValue('name')} foi deletado`,
+                  })
+                } catch (error) {
+                  toast({
+                    variant: 'destructive',
+                    title: 'Erro ao deletar cliente!',
+                    description: `O Cliente ${row.getValue('name')} não foi deletado`,
+                  })
+                  console.error(error)
+                }
+
                 action('customers')
-                location.reload()
               }}
             >
               Deletar

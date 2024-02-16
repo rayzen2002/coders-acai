@@ -1,4 +1,5 @@
 'use client'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,6 +14,7 @@ import {
 import { Check, PlusCircle, Store } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -61,18 +63,19 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
-interface FormCustomers {
-  id: string
-  name: string
-  email: string
-  address: string
-  distributorName: string
-}
+
 interface Distributor {
   id: string
   name: string
 }
-
+const customerFormSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(2, { message: 'Nome inválido' }),
+  email: z.string().email({ message: 'Email inválido' }),
+  address: z.string().min(5, { message: 'Endereço inválido' }),
+  distributorName: z.string(),
+})
+type customerFormValues = z.infer<typeof customerFormSchema>
 export function CustomersDataTable<TData, TValue>({
   columns,
   data,
@@ -81,9 +84,11 @@ export function CustomersDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
   const [distributors, setDistributors] = useState<Distributor[]>([])
-  const form = useForm<FormCustomers>()
-  const onSubmit: SubmitHandler<FormCustomers> = async (
-    newCustomer: FormCustomers,
+  const form = useForm<customerFormValues>({
+    resolver: zodResolver(customerFormSchema),
+  })
+  const onSubmit: SubmitHandler<customerFormValues> = async (
+    newCustomer: customerFormValues,
   ) => {
     const body = {
       ...newCustomer,
@@ -138,7 +143,6 @@ export function CustomersDataTable<TData, TValue>({
       rowSelection,
     },
   })
-
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_KEY}/distributors`)
       .then((response) => {
@@ -192,6 +196,11 @@ export function CustomersDataTable<TData, TValue>({
                       className="col-span-3"
                       {...form.register('name')}
                     />
+                    {form.formState.errors.name && (
+                      <span className="w-[400px] text-red-800 font-medium text-bold">
+                        {form.formState.errors.name.message}
+                      </span>
+                    )}
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="email" className="text-right">
@@ -203,6 +212,11 @@ export function CustomersDataTable<TData, TValue>({
                       className="col-span-3"
                       {...form.register('email')}
                     />
+                    {form.formState.errors.email && (
+                      <span className="w-[400px] text-red-800 font-medium text-bold">
+                        {form.formState.errors.email.message}
+                      </span>
+                    )}
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="address" className="text-right">
@@ -214,6 +228,11 @@ export function CustomersDataTable<TData, TValue>({
                       className="col-span-3"
                       {...form.register('address')}
                     />
+                    {form.formState.errors.address && (
+                      <span className="w-[400px] text-red-800 font-medium text-bold">
+                        {form.formState.errors.address.message}
+                      </span>
+                    )}
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <FormField
