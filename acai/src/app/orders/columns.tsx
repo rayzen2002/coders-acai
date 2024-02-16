@@ -254,12 +254,27 @@ export const columns: ColumnDef<Orders>[] = [
                   <TableFooter>
                     <TableRow>
                       <TableCell colSpan={3}>Total do pedido</TableCell>
-                      <TableCell className="text-right font-medium">
-                        {new Intl.NumberFormat('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        }).format(price / 100)}
-                      </TableCell>
+                      {Promise.all(
+                        orderItems.map((orderItem) =>
+                          getProducts(orderItem.productId).then((product) => {
+                            return (
+                              <TableCell
+                                key={orderItem.id}
+                                className="text-right font-medium"
+                              >
+                                {new Intl.NumberFormat('pt-BR', {
+                                  style: 'currency',
+                                  currency: 'BRL',
+                                }).format(
+                                  (orderItem.quantity *
+                                    product.price_in_cents) /
+                                    100,
+                                )}
+                              </TableCell>
+                            )
+                          }),
+                        ),
+                      )}
                     </TableRow>
                   </TableFooter>
                 </Table>
