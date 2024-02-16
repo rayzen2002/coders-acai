@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 
 export interface Shipments {
@@ -132,13 +133,30 @@ export const column: ColumnDef<Shipments>[] = [
             <DropdownMenuItem>View customer</DropdownMenuItem>
             <DropdownMenuItem
               onClick={async () => {
-                await fetch(
-                  `${process.env.NEXT_PUBLIC_API_KEY}/shipments/${shipment.id}`,
-                  {
-                    method: 'DELETE',
-                  },
-                )
-                action('shipments')
+                try {
+                  const deleteShipmentRequest = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_KEY}/shipments/${shipment.id}`,
+                    {
+                      method: 'DELETE',
+                    },
+                  )
+                  if (deleteShipmentRequest.ok) {
+                    action('shipments')
+                    toast({
+                      className: 'bg-green-500',
+                      title: 'Carga deletada com sucesso!',
+                    })
+                    action('shipments')
+                  } else {
+                    throw new Error()
+                  }
+                } catch (error) {
+                  console.error(error)
+                  toast({
+                    className: 'bg-red-500',
+                    title: 'Não foi possivel deletar!',
+                  })
+                }
               }}
               className="text-red-600"
             >

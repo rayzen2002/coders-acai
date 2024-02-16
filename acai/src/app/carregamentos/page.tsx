@@ -47,7 +47,7 @@ export default async function Shipments() {
         </h1>
       </div>
       <ShipmentsDataTable
-        data={[...randomShipments, ...shipments]}
+        data={[...randomShipments, ...shipments].reverse()}
         columns={column}
       />
     </>

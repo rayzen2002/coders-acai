@@ -1,4 +1,5 @@
 'use client'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,6 +15,7 @@ import {
 import { PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -40,6 +42,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 
 interface ShipmentForm {
@@ -56,6 +59,23 @@ interface Shipment {
   destiny: string
   fuelPriceInCents: number
 }
+const ShipmentSchema = z.object({
+  id: z.string().uuid({ message: 'ID inválido' }).optional(),
+  temperature: z.coerce
+    .number({ invalid_type_error: 'Temperatura inválida' })
+    .min(1, { message: 'Temperatura inválida' }),
+  origin: z
+    .string({ required_error: 'Origem inválida' })
+    .min(2, { message: 'Origem inválida' }),
+  destiny: z
+    .string({ required_error: 'Destino inválida' })
+    .min(2, { message: 'Destino inválido' }),
+  fuelPriceInCents: z
+    .string({ invalid_type_error: 'Preço deve ser um número' })
+    .min(1, { message: 'valor inválido' }),
+  userId: z.string().optional(),
+})
+type ShipmentsValues = z.infer<typeof ShipmentSchema>
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
@@ -65,6 +85,7 @@ export function ShipmentsDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const options = ['id', 'Temperatura', 'Origem', 'Destino', 'Preço', 'Ação']
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -87,26 +108,63 @@ export function ShipmentsDataTable<TData, TValue>({
       rowSelection,
     },
   })
-  const { register, handleSubmit, reset } = useForm<ShipmentForm>()
-  const onSubmit: SubmitHandler<ShipmentForm> = async (newShipment) => {
+  const transformPrice = (string: string) => {
+    if (!string.includes(',')) {
+      return parseFloat(string) * 100
+    }
+    const newString = string.replace(',', '.')
+    return parseFloat(newString) * 100
+  }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ShipmentsValues>({
+    resolver: zodResolver(ShipmentSchema),
+  })
+
+  const onSubmit: SubmitHandler<ShipmentsValues> = async (newShipment) => {
+    console.log(newShipment)
+    const price = newShipment.fuelPriceInCents
+    const BodyPrice = transformPrice(price)
     const body: Shipment = {
       destiny: newShipment.destiny,
       origin: newShipment.origin,
-      temperature: parseFloat(newShipment.temperature),
-      fuelPriceInCents: parseFloat(newShipment.fuelPriceInCents),
+      temperature: newShipment.temperature,
+      fuelPriceInCents: BodyPrice,
     }
-    await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/shipment`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: {
-        tags: ['shipments'],
-      },
-    })
-    action('shipments')
-    reset()
+    try {
+      const shipmentResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/shipment`,
+        {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          next: {
+            tags: ['shipments'],
+          },
+        },
+      )
+      if (shipmentResponse.ok) {
+        toast({
+          className: 'bg-green-700',
+          title: 'Cadastro realizado com sucesso!',
+        })
+        action('shipments')
+        reset()
+      } else {
+        throw new Error()
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Falha no cadastro!',
+      })
+      reset()
+    }
   }
 
   return (
@@ -114,10 +172,22 @@ export function ShipmentsDataTable<TData, TValue>({
       <div className="flex flex-row mx-auto gap-6 justify-center items-center">
         <div className="flex items-center py-4 ">
           <Input
-            placeholder="Filtrar ids..."
+            placeholder="Filtrar por id"
             value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
             onChange={(event) =>
               table.getColumn('id')?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        </div>
+        <div className="flex items-center py-4 ">
+          <Input
+            placeholder="Filtrar por origem"
+            value={
+              (table.getColumn('origin')?.getFilterValue() as string) ?? ''
+            }
+            onChange={(event) =>
+              table.getColumn('origin')?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
@@ -156,6 +226,11 @@ export function ShipmentsDataTable<TData, TValue>({
                       className="col-span-3"
                       {...register('temperature')}
                     />
+                    {errors.temperature && (
+                      <span className="w-[400px] text-red-700">
+                        {errors.temperature.message}
+                      </span>
+                    )}
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">
@@ -167,6 +242,11 @@ export function ShipmentsDataTable<TData, TValue>({
                       className="col-span-3"
                       {...register('origin')}
                     />
+                    {errors.origin && (
+                      <span className="text-red-700 w-[400px]">
+                        {errors.origin.message}
+                      </span>
+                    )}
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">
@@ -178,6 +258,11 @@ export function ShipmentsDataTable<TData, TValue>({
                       className="col-span-3"
                       {...register('destiny')}
                     />
+                    {errors.destiny && (
+                      <span className="text-red-700 w-[400px]">
+                        {errors.destiny.message}
+                      </span>
+                    )}
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">
@@ -189,6 +274,11 @@ export function ShipmentsDataTable<TData, TValue>({
                       className="col-span-3"
                       {...register('fuelPriceInCents')}
                     />
+                    {errors.fuelPriceInCents && (
+                      <span className="text-red-700 w-[400px]">
+                        {errors.fuelPriceInCents.message}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <DialogFooter>
@@ -207,7 +297,7 @@ export function ShipmentsDataTable<TData, TValue>({
               {table
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
-                .map((column) => {
+                .map((column, i) => {
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
@@ -217,7 +307,7 @@ export function ShipmentsDataTable<TData, TValue>({
                         column.toggleVisibility(!!value)
                       }
                     >
-                      {column.id}
+                      {options[i]}
                     </DropdownMenuCheckboxItem>
                   )
                 })}

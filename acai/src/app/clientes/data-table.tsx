@@ -68,14 +68,14 @@ interface Distributor {
   id: string
   name: string
 }
-const customerFormSchema = z.object({
+const CustomerFormSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2, { message: 'Nome inválido' }),
   email: z.string().email({ message: 'Email inválido' }),
   address: z.string().min(5, { message: 'Endereço inválido' }),
   distributorName: z.string(),
 })
-type customerFormValues = z.infer<typeof customerFormSchema>
+type CustomerFormSchema = z.infer<typeof CustomerFormSchema>
 export function CustomersDataTable<TData, TValue>({
   columns,
   data,
@@ -84,16 +84,17 @@ export function CustomersDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
   const [distributors, setDistributors] = useState<Distributor[]>([])
-  const form = useForm<customerFormValues>({
-    resolver: zodResolver(customerFormSchema),
+  const form = useForm<CustomerFormSchema>({
+    resolver: zodResolver(CustomerFormSchema),
   })
-  const onSubmit: SubmitHandler<customerFormValues> = async (
-    newCustomer: customerFormValues,
+  const onSubmit: SubmitHandler<CustomerFormSchema> = async (
+    newCustomer: CustomerFormSchema,
   ) => {
     const body = {
       ...newCustomer,
     }
     try {
+      console.log(newCustomer)
       const createCustomer = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/customer`,
         {
