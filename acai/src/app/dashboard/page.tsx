@@ -21,7 +21,7 @@ export default function Dashboard() {
       <div className="flex flex-1 flex-col gap-4 p-8 pt-6">
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Estatísticas </h1>
             <div className="flex gap-2">
               <DatePickerWithRange />
               <Button variant="outline" className="gap-2" onClick={pdfCreator}>
