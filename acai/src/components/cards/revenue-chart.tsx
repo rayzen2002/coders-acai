@@ -17,9 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card'
-import { Checkbox } from '../ui/checkbox'
 import { DatePickerWithRange } from '../ui/date-range-picker'
-// import { DateRangePicker } from '../ui/date-range-picker'
 import { Label } from '../ui/label'
 
 const data = [

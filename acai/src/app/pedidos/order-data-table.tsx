@@ -1,5 +1,4 @@
 'use client'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,9 +11,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Check, PlusCircle, Store } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -48,13 +46,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   Table,
   TableBody,
   TableCell,
@@ -62,86 +53,40 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { toast } from '@/components/ui/use-toast'
-import action from '@/lib/api/actions'
 import { cn } from '@/lib/utils'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
-interface FormCustomers {
-  id: string
-  name: string
-  email: string
-  address: string
-  distributorName: string
-}
-interface Distributor {
-  id: string
-  name: string
-  // Add other properties if needed
-}
 
-export function CustomersDataTable<TData, TValue>({
+export function OrderDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
-  const [distributors, setDistributors] = useState<Distributor[]>([])
-  const form = useForm<FormCustomers>()
-  const onSubmit: SubmitHandler<FormCustomers> = async (
-    newCustomer: FormCustomers,
-  ) => {
-    const body = {
-      ...newCustomer,
-    }
-    try {
-      const createCustomer = await fetch(
-        `${process.env.NEXT_PUBLIC_API_KEY}/customer`,
-        {
-          body: JSON.stringify(body),
-          method: 'POST',
-          next: {
-            revalidate: 1,
-            tags: ['customers'],
-          },
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      )
-      if (createCustomer.ok) {
-        toast({
-          className: 'bg-green-700',
-          title: 'Cadastro realizado com sucesso!',
-        })
-        action('customers')
-        form.reset()
-      } else {
-        throw new Error('Erro na requisição')
-      }
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Erro no cadastro!',
-        description:
-          'Não foi possível cadastrar o Cliente, verifique as credenciais',
-      })
-    }
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const distributors = [
+    {
+      id: '46ded87b-3a4c-4d78-927f-5fa3af43a031',
+      name: 'philipemonstro',
+    },
+  ]
+  const form = useForm()
+  const onSubmit = () => {
+    console.log('TODO')
   }
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -149,78 +94,60 @@ export function CustomersDataTable<TData, TValue>({
     },
   })
 
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_KEY}/distributors`)
-      .then((response) => {
-        return response.json()
-      })
-      .then((data) => {
-        setDistributors(data.distributors)
-      })
-  }, [])
   return (
-    <div className="px-4">
-      <div className="flex gap-2 mx-auto justify-center items-center my-6">
-        <Input
-          placeholder="Filtrar por id..."
-          value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('id')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <Input
-          placeholder="Filtrar por email..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-
+    <div className="mx-4">
+      <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filtrar por id..."
+            value={(table.getColumn('id')?.getFilterValue() as string) ?? ''}
+            onChange={(event) =>
+              table.getColumn('id')?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        </div>
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filtrar por Pedido..."
+            value={
+              (table.getColumn('customer')?.getFilterValue() as string) ?? ''
+            }
+            onChange={(event) =>
+              table.getColumn('customer')?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        </div>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="gap-1">
               <PlusCircle className="w-4 h-4" />
-              Novo Cliente
+              Novo Pedido
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Cliente</DialogTitle>
+              <DialogTitle>Pedido</DialogTitle>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
+                    <Label htmlFor="name">Name</Label>
                     <Input
                       id="name"
-                      placeholder="Nome do Cliente"
+                      placeholder="Nome do Pedido"
                       className="col-span-3"
                       {...form.register('name')}
                     />
                   </div>
+
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="email" className="text-right">
-                      email
-                    </Label>
-                    <Input
-                      id="email"
-                      placeholder="Email do cliente"
-                      className="col-span-3"
-                      {...form.register('email')}
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="address" className="text-right">
-                      Endereço
-                    </Label>
+                    <Label htmlFor="address">Endereço</Label>
                     <Input
                       id="address"
-                      placeholder="Endereço do cliente"
+                      placeholder="Endereço do Pedido"
                       className="col-span-3"
                       {...form.register('address')}
                     />
@@ -247,7 +174,7 @@ export function CustomersDataTable<TData, TValue>({
                                     {field.value
                                       ? distributors.find(
                                           (distributor) =>
-                                            distributor.name === field.value,
+                                            distributor?.name === field.value,
                                         )?.name
                                       : 'Selecione um distibuidor'}
                                     <Store className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -263,24 +190,24 @@ export function CustomersDataTable<TData, TValue>({
                                   <CommandGroup>
                                     {distributors.map((distributor) => (
                                       <CommandItem
-                                        value={distributor.name}
+                                        value={distributor?.name}
                                         key={distributor.id}
                                         onSelect={() => {
                                           form.setValue(
                                             'distributorName',
-                                            distributor.name,
+                                            distributor?.name,
                                           )
                                         }}
                                       >
                                         <Check
                                           className={cn(
                                             'mr-2 h-4 w-4',
-                                            distributor.name === field.value
+                                            distributor?.name === field.value
                                               ? 'opacity-100'
                                               : 'opacity-0',
                                           )}
                                         />
-                                        {distributor.name}
+                                        {distributor?.name}
                                       </CommandItem>
                                     ))}
                                   </CommandGroup>
@@ -295,7 +222,7 @@ export function CustomersDataTable<TData, TValue>({
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="submit">Cadastrar Cliente</Button>
+                  <Button type="submit">Cadastrar Pedido</Button>
                 </DialogFooter>
               </form>
             </Form>
@@ -352,27 +279,29 @@ export function CustomersDataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-2">
+      <div className="flex justfy-center items-center">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} de{' '}
           {table.getFilteredRowModel().rows.length} linhas(s) selecionadas.
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   )

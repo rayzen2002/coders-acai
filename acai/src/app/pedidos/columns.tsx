@@ -1,12 +1,10 @@
 'use client'
 import { DialogTitle } from '@radix-ui/react-dialog'
-import { PopoverContent } from '@radix-ui/react-popover'
 import { ColumnDef } from '@tanstack/react-table'
 import axios from 'axios'
 import { formatDate, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale/pt-BR'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
-import { useEffect } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -25,9 +23,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Popover, PopoverTrigger } from '@/components/ui/popover'
 import {
   Table,
   TableBody,
@@ -39,7 +34,6 @@ import {
 } from '@/components/ui/table'
 import action from '@/lib/api/actions'
 
-import { Product } from '../products/data-table'
 export type Customer = {
   id: string
   name: string

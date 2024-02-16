@@ -42,8 +42,6 @@ import {
 } from '@/components/ui/table'
 import action from '@/lib/api/actions'
 
-import { Shipments, ShipmentsApi } from './columns'
-
 interface ShipmentForm {
   id: string
   temperature: string

@@ -29,28 +29,28 @@ export function Header() {
             Início
           </Link>
           <Link
-            href="/orders"
+            href="/pedidos"
             className="flex items-center space-x-4 lg:space-x-6"
           >
             <UtensilsCrossed className="h-4 w-4" />
             Pedidos
           </Link>
           <Link
-            href="/customers"
+            href="/clientes"
             className="flex items-center space-x-4 lg:space-x-6"
           >
             <Users className="h-4 w-4" />
             Clientes
           </Link>
           <Link
-            href="/shipments"
+            href="/carregamentos"
             className="flex items-center space-x-4 lg:space-x-6"
           >
             <Truck className="h-4 w-4" />
             Carregamentos
           </Link>
           <Link
-            href="/products"
+            href="/produtos"
             className="flex items-center space-x-4 lg:space-x-6"
           >
             <Barcode className="h-4 w-4" />

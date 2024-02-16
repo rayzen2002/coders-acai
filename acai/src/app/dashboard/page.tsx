@@ -1,7 +1,5 @@
 'use client'
-import ReactPDF from '@react-pdf/renderer'
 import { FileText } from 'lucide-react'
-import path from 'path'
 
 import DayOrdersAmountCard from '@/components/cards/day-orders-amount-card'
 import MonthCanceledOrdersAmountCard from '@/components/cards/month-canceled-orders-amount-card'

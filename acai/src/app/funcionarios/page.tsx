@@ -28,12 +28,6 @@ export default async function Funcionarios() {
           levelOfAccess: faker.number.int({ min: 1, max: 4 }),
         },
       ],
-
-      // id: faker.string.uuid(),
-      // name: faker.person.fullName(),
-      // email: faker.internet.email(),
-      // address: faker.location.streetAddress(),
-      // distributorId: faker.company.name(),
     }
   }
   const randomUsers = faker.helpers.multiple(createRandomUser, {
