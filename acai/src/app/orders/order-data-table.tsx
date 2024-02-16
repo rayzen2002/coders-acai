@@ -63,11 +63,19 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
+import { Customers } from '../customers/page'
+import { Products } from '../products/columns'
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
-
+interface Distributors {
+  id: string
+  name: string
+  customers: Customers[]
+  products: Products[]
+}
 export function OrderDataTable<TData, TValue>({
   columns,
   data,
@@ -75,7 +83,7 @@ export function OrderDataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([])
-  const [distributors, setDistributors] = useState([])
+  const [distributors, setDistributors] = useState<Distributors[]>([])
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_KEY}/distributors`)
