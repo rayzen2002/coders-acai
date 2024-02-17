@@ -45,14 +45,6 @@ import {
 import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 
-interface ShipmentForm {
-  id: string
-  temperature: string
-  origin: string
-  destiny: string
-  fuelPriceInCents: string
-  userId: string | null
-}
 interface Shipment {
   temperature: number
   origin: string
@@ -125,14 +117,13 @@ export function ShipmentsDataTable<TData, TValue>({
   })
 
   const onSubmit: SubmitHandler<ShipmentsValues> = async (newShipment) => {
-    console.log(newShipment)
     const price = newShipment.fuelPriceInCents
-    const BodyPrice = transformPrice(price)
+    const bodyPrice = transformPrice(price)
     const body: Shipment = {
       destiny: newShipment.destiny,
       origin: newShipment.origin,
       temperature: newShipment.temperature,
-      fuelPriceInCents: BodyPrice,
+      fuelPriceInCents: bodyPrice,
     }
     try {
       const shipmentResponse = await fetch(

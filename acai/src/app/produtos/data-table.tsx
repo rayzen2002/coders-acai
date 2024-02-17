@@ -1,5 +1,6 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,6 +15,7 @@ import {
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -34,6 +36,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 
 interface DataTableProps<TData, TValue> {
@@ -51,13 +54,21 @@ export interface Product {
   description: string
   price_in_cents: number
 }
-interface ProductForm {
-  id: string
-  name: string
-  description: string
-  price_in_cents: string
-}
-
+const ProductsSchema = z.object({
+  id: z.string().uuid({ message: 'ID inválido' }).optional(),
+  name: z
+    .string({ required_error: 'Nome inválido' })
+    .min(2, { message: 'Nome inválido' }),
+  description: z
+    .string({ required_error: 'Descrição inválida' })
+    .min(2, { message: 'Descrição inválida' }),
+  price_in_cents: z
+    .string({ invalid_type_error: 'Preço deve ser uma string' })
+    .refine((value) => /^(\d{1,3}([,.]\d{3})*([,.]\d{2})?|\d+)$/.test(value), {
+      message: 'Preço deve ser um valor numérico válido',
+    }),
+})
+type ProductsValues = z.infer<typeof ProductsSchema>
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -81,26 +92,61 @@ export function DataTable<TData, TValue>({
       sorting,
     },
   })
-  const { register, handleSubmit, reset } = useForm<ProductForm>()
-  const onSubmit: SubmitHandler<ProductForm> = async (newProduct) => {
+  const transformPrice = (string: string) => {
+    if (!string.includes(',')) {
+      return parseFloat(string) * 100
+    }
+    const newString = string.replace(',', '.')
+    return parseFloat(newString) * 100
+  }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProductsValues>({
+    resolver: zodResolver(ProductsSchema),
+  })
+  const onSubmit: SubmitHandler<ProductsValues> = async (newProduct) => {
+    const price = newProduct.price_in_cents
+    const bodyPrice = transformPrice(price)
     const body: CreateProductBodyApiCall = {
       name: newProduct.name,
       description: newProduct.description,
-      price_in_cents: parseInt(newProduct.price_in_cents),
+      price_in_cents: bodyPrice,
     }
     console.log(JSON.stringify(body))
-    await fetch(`${process.env.NEXT_PUBLIC_API_KEY}/product`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: {
-        tags: ['products'],
-      },
-    })
-    action('products')
-    reset()
+    try {
+      const productResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/product`,
+        {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          next: {
+            tags: ['products'],
+          },
+        },
+      )
+      if (productResponse.ok) {
+        toast({
+          className: 'bg-green-700',
+          title: 'Cadastro realizado com sucesso!',
+        })
+        action('products')
+        reset()
+      } else {
+        throw new Error()
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Falha no cadastro!',
+      })
+      reset()
+    }
   }
 
   return (
@@ -146,6 +192,11 @@ export function DataTable<TData, TValue>({
                     className="col-span-3"
                     {...register('name')}
                   />
+                  {errors.name && (
+                    <span className="w-[400px] text-red-700">
+                      {errors.name.message}
+                    </span>
+                  )}
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="description" className="text-right">
@@ -157,6 +208,11 @@ export function DataTable<TData, TValue>({
                     className="col-span-3"
                     {...register('description')}
                   />
+                  {errors.description && (
+                    <span className="w-[400px] text-red-700">
+                      {errors.description.message}
+                    </span>
+                  )}
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="price_in_cents" className="text-right">
@@ -168,6 +224,11 @@ export function DataTable<TData, TValue>({
                     className="col-span-3"
                     {...register('price_in_cents')}
                   />
+                  {errors.price_in_cents && (
+                    <span className="w-[400px] text-red-700">
+                      {errors.price_in_cents.message}
+                    </span>
+                  )}
                 </div>
               </div>
               <DialogFooter>

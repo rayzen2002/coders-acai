@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 
 import { Product } from './data-table'
@@ -120,12 +121,28 @@ export const columns: ColumnDef<Product>[] = [
             <DropdownMenuItem
               className="text-red-500"
               onClick={async () => {
-                await axios.delete(`product/${product.id}`, {
-                  baseURL: process.env.NEXT_PUBLIC_API_KEY,
-                  // withCredentials: true,
-                })
-                action('products')
-                location.reload()
+                try {
+                  const deleteProductResponse = await axios.delete(
+                    `product/${product.id}`,
+                    {
+                      baseURL: process.env.NEXT_PUBLIC_API_KEY,
+                      // withCredentials: true,
+                    },
+                  )
+                  if (deleteProductResponse.statusText === 'OK') {
+                    toast({
+                      className: 'bg-green-500',
+                      title: 'Produto deletado com sucesso!',
+                    })
+                    action('products')
+                  }
+                } catch (error) {
+                  console.error(error)
+                  toast({
+                    className: 'bg-red-500',
+                    title: 'Não foi possivel deletar!',
+                  })
+                }
               }}
             >
               Deletar

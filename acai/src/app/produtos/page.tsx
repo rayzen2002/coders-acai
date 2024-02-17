@@ -49,7 +49,7 @@ export default async function Products() {
         <h1 className="mx-auto text-3xl py-6">Produtos</h1>
       </div>
 
-      <DataTable columns={columns} data={[...randomProducts, ...products]} />
+      <DataTable columns={columns} data={[...products]} />
     </>
   )
 }
