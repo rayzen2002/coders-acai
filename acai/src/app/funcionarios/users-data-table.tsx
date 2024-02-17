@@ -72,8 +72,10 @@ const usersFormSchema = z.object({
     message: 'Nome do usuário deve ter pelo menos 2 caracteres',
   }),
 
-  password: z.string(),
-  groups: z.string().min(2, {
+  password: z
+    .string()
+    .min(6, { message: 'Senha deve conter pelo menos 6 caracteres' }),
+  groups: z.string({ required_error: 'Defina o grupo do funcionário' }).min(2, {
     message: 'Grupo deve conter pelo menos 2 caracteres',
   }),
 })
@@ -106,7 +108,6 @@ export function UsersDataTable<TData, TValue>({
       password: newUser.password,
       group: [newUser.groups],
     }
-
     try {
       const userApiResposne = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/user`,
@@ -117,23 +118,31 @@ export function UsersDataTable<TData, TValue>({
             revalidate: 1,
             tags: ['users'],
           },
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
       )
       if (userApiResposne.ok) {
+        toast({
+          className: 'bg-green-700',
+          title: 'Cadastro realizado com sucesso!',
+        })
         action('users')
         form.reset()
+      } else {
+        throw new Error()
       }
-    } catch (error) {}
-    toast({
-      title: 'Cadastro',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-green-700">
-            Funcionário cadastrado com sucesso!
-          </code>
-        </pre>
-      ),
-    })
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro no cadastro!',
+        description:
+          'Não foi possível cadastrar o Cliente, verifique as credenciais',
+      })
+      form.reset()
+      console.error(error)
+    }
   }
   const table = useReactTable({
     data,
@@ -196,6 +205,11 @@ export function UsersDataTable<TData, TValue>({
                         className="col-span-3"
                         {...form.register('username')}
                       />
+                      {form.formState.errors.username && (
+                        <span className="w-[400px] text-red-800 font-medium text-bold">
+                          {form.formState.errors.username.message}
+                        </span>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-4 items-center gap-4">
@@ -209,6 +223,11 @@ export function UsersDataTable<TData, TValue>({
                         className="col-span-3"
                         {...form.register('password')}
                       />
+                      {form.formState.errors.password && (
+                        <span className="w-[400px] text-red-800 font-medium text-bold">
+                          {form.formState.errors.password.message}
+                        </span>
+                      )}
                     </div>
 
                     <div className="ml-14 mb-2 grid grid-cols-4 items-center gap-4">

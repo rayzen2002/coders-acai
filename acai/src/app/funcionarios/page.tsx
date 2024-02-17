@@ -18,22 +18,6 @@ interface UsersAPI {
   users: EmployesAPI[]
 }
 export default async function Funcionarios() {
-  const createRandomUser = (): Functionary => {
-    return {
-      id: faker.string.uuid(),
-      username: faker.person.fullName(),
-      groups: [
-        {
-          groupName: faker.person.jobTitle(),
-          levelOfAccess: faker.number.int({ min: 1, max: 4 }),
-        },
-      ],
-    }
-  }
-  const randomUsers = faker.helpers.multiple(createRandomUser, {
-    count: 5,
-  })
-
   const getEmployeesApiCall = await fetch(
     `${process.env.NEXT_PUBLIC_API_KEY}/users`,
     {
@@ -56,10 +40,7 @@ export default async function Funcionarios() {
         </div>
       </div>
       <div className="px-6">
-        <UsersDataTable
-          columns={columns}
-          data={[...randomUsers, ...employees.users]}
-        />
+        <UsersDataTable columns={columns} data={[...employees.users]} />
       </div>
     </>
   )

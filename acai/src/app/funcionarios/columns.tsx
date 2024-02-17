@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 export interface Functionary {
   id: string
@@ -107,17 +108,35 @@ export const columns: ColumnDef<Functionary>[] = [
             <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
             <DropdownMenuItem
               onClick={async () => {
-                await fetch(
-                  `${process.env.NEXT_PUBLIC_API_KEY}/user/${user.id}`,
-                  {
-                    method: 'DELETE',
-                    next: {
-                      revalidate: 1,
-                      tags: ['users'],
+                try {
+                  const userResponse = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_KEY}/user/${user.id}`,
+                    {
+                      method: 'DELETE',
+                      next: {
+                        revalidate: 1,
+                        tags: ['users'],
+                      },
                     },
-                  },
-                )
-                action('users')
+                  )
+                  if (userResponse.ok) {
+                    toast({
+                      variant: 'default',
+                      title: 'Cliente deletado com sucesso!',
+                      description: `O Cliente ${row.getValue('username')} foi deletado`,
+                    })
+                    action('users')
+                  } else {
+                    throw new Error()
+                  }
+                } catch (error) {
+                  toast({
+                    variant: 'destructive',
+                    title: 'Erro ao deletar Funcionário!',
+                    description: `O Funcionário ${row.getValue('username')} não foi deletado`,
+                  })
+                  console.error(error)
+                }
               }}
               className="text-red-600"
             >
