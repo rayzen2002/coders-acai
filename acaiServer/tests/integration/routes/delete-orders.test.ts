@@ -1,6 +1,6 @@
 test('DELETE to /orders/id should delete an order and all order-items associated', () => {
   const orderBody = {
-    customerId: '0e0b8cb4-0747-4c27-b8de-1d1ff32ecc2f',
+    customerName: 'Stewart Schoen MD',
     orderItems: [
       {
         productName: 'Small Fresh Fish',

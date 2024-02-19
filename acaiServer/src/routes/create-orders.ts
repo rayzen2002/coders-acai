@@ -7,7 +7,7 @@ import axios from 'axios'
 export async function createOrder(server: FastifyInstance) {
   server.post('/order', { preHandler: [auth] }, async (req, res) => {
     const orderSchema = z.object({
-      customerId: z.string(),
+      customerName: z.string(),
       orderItems: z.array(
         z.object({
           productName: z.string(),
@@ -16,10 +16,20 @@ export async function createOrder(server: FastifyInstance) {
       ),
     })
     const orderValues = orderSchema.parse(req.body)
+
+    const customer = await prisma.customers.findFirst({
+      where: {
+        name: orderValues.customerName,
+      },
+    })
+    if (!customer) {
+      return res.status(404).send('Customer not found')
+    }
+
     try {
       const order = await prisma.orders.create({
         data: {
-          customerId: orderValues.customerId,
+          customerId: customer.id,
           total_in_cents: 0,
         },
       })
