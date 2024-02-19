@@ -21,13 +21,15 @@ import { deleteUser } from './routes/delete-user'
 import { getOrders } from './routes/get-orders'
 import { deleteOrder } from './routes/delete-order'
 import { createDistributor } from './routes/create-distributors'
+import { createOrder } from './routes/create-orders'
+import { createOrderItems } from './routes/create-order-items'
 
 dotenv.config()
 export const server = fastify()
 
 server.register(fastifyCors, {
-  origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
-  credentials: true,
+  origin: true,
+  credentials: false,
 })
 server.register(fastifyJwt, {
   secret: 'supersecret',
@@ -59,8 +61,11 @@ server.register(getShipment)
 server.register(deleteShipment)
 
 server.register(deleteUser)
+
+server.register(createOrder)
 server.register(getOrders)
 server.register(deleteOrder)
+server.register(createOrderItems)
 
 server.listen({ port: 3333 }).then(() => {
   console.log(`🚀 HTTP Server running on port: 3333 🚀`)

@@ -12,13 +12,15 @@ export async function createOrderItems(server: FastifyInstance) {
     })
     const orderItems = orderItemsSchema.parse(req.body)
     try {
-      await prisma.products.create({
+      const orderItem = await prisma.orderItems.create({
         data: {
-          name: orderItems.orderId,
-          description: orderItems.productId,
-          price_in_cents: orderItems.quantity,
+          orderId: orderItems.orderId,
+          productId: orderItems.productId,
+          quantity: orderItems.quantity,
         },
       })
+      // console.log(orderItem)
+      res.status(200).send(orderItem)
     } catch (error) {
       console.error(error)
       res.status(409)

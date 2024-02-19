@@ -20,6 +20,7 @@ export async function deleteOrder(server: FastifyInstance) {
           id: order.id,
         },
       })
+      res.status(204)
     } catch (error) {
       console.error(error)
       res.status(409)

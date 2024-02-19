@@ -11,7 +11,6 @@ export async function getOrders(server: FastifyInstance) {
           customer: true,
         },
       })
-      console.log(orders)
       return { orders }
     } catch (error) {
       console.error(error)

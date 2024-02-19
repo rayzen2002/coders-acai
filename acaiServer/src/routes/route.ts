@@ -96,7 +96,7 @@ export async function userRoute(server: FastifyInstance) {
         id,
       },
     })
-    console.log(user)
+
     return { user }
   })
 }
