@@ -28,8 +28,8 @@ dotenv.config()
 export const server = fastify()
 
 server.register(fastifyCors, {
-  origin: true,
-  credentials: false,
+  origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
+  credentials: true,
 })
 server.register(fastifyJwt, {
   secret: 'supersecret',
