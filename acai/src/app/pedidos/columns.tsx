@@ -32,6 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 
 export type Customer = {
@@ -309,16 +310,37 @@ export const columns: ColumnDef<Orders>[] = [
               Copiar ID do Pedido
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem>View customer</DropdownMenuItem> */}
             <DropdownMenuItem
               className="text-red-500"
               onClick={async () => {
-                await axios.delete(`orders/${order.id}`, {
-                  baseURL: process.env.NEXT_PUBLIC_API_KEY,
-                  // withCredentials: true,
-                })
-                action('orders')
-                location.reload()
+                try {
+                  const orderDeleteResponse = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_KEY}/orders/${order.id}`,
+                    {
+                      method: 'DELETE',
+                      next: {
+                        revalidate: 1,
+                      },
+                    },
+                  )
+                  if (orderDeleteResponse.ok) {
+                    action('orders')
+                    toast({
+                      variant: 'default',
+                      title: 'Produto deletado com sucesso!',
+                      description: `O Pedido  foi deletado`,
+                    })
+                  } else {
+                    throw new Error()
+                  }
+                } catch (error) {
+                  console.error(error)
+                  toast({
+                    variant: 'destructive',
+                    title: 'Erro ao deletar Funcionário!',
+                    description: `O Pedido não foi deletado`,
+                  })
+                }
               }}
             >
               Deletar
