@@ -27,8 +27,15 @@ import { createOrderItems } from './routes/create-order-items'
 dotenv.config()
 export const server = fastify()
 
+server.register(fastifyCookie, {
+  secret: 'supersecretCookie',
+  parseOptions: {
+    sameSite: 'none',
+  },
+})
 server.register(fastifyCors, {
-  origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
+  origin: true,
+  // origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
   credentials: true,
 })
 server.register(fastifyJwt, {
@@ -44,12 +51,7 @@ server.register(deleteProduct)
 
 server.register(GetMonthRevenue)
 server.register(groupRoutes)
-server.register(fastifyCookie, {
-  secret: 'supersecretCookie',
-  parseOptions: {
-    sameSite: 'none',
-  },
-})
+
 server.register(loginRoute)
 server.register(userRoute)
 
