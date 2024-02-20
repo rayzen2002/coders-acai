@@ -135,6 +135,8 @@ export const columns: ColumnDef<Product>[] = [
                       title: 'Produto deletado com sucesso!',
                     })
                     action('products')
+                  } else {
+                    throw new Error()
                   }
                 } catch (error) {
                   console.error(error)
