@@ -123,7 +123,7 @@ export const columns: ColumnDef<Product>[] = [
               onClick={async () => {
                 try {
                   const productResponse = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_KEY}/user/${product.id}`,
+                    `${process.env.NEXT_PUBLIC_API_KEY}/product/${product.id}`,
                     {
                       method: 'DELETE',
                       next: {
