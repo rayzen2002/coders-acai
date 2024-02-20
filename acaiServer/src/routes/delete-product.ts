@@ -15,6 +15,7 @@ export async function deleteProduct(server: FastifyInstance) {
           id: product.id,
         },
       })
+      return res.status(204)
     } catch (error) {
       console.error(error)
       res.status(409)

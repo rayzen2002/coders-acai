@@ -122,28 +122,33 @@ export const columns: ColumnDef<Product>[] = [
               className="text-red-500"
               onClick={async () => {
                 try {
-                  const deleteProductResponse = await axios.delete(
-                    `product/${product.id}`,
+                  const productResponse = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_KEY}/user/${product.id}`,
                     {
-                      baseURL: process.env.NEXT_PUBLIC_API_KEY,
-                      // withCredentials: true,
+                      method: 'DELETE',
+                      next: {
+                        revalidate: 1,
+                        tags: ['products'],
+                      },
                     },
                   )
-                  if (deleteProductResponse.statusText === 'OK') {
+                  if (productResponse.ok) {
                     toast({
-                      className: 'bg-green-500',
+                      variant: 'default',
                       title: 'Produto deletado com sucesso!',
+                      description: `O Produto ${row.getValue('name')} foi deletado`,
                     })
                     action('products')
                   } else {
                     throw new Error()
                   }
                 } catch (error) {
-                  console.error(error)
                   toast({
-                    className: 'bg-red-500',
-                    title: 'Não foi possivel deletar!',
+                    variant: 'destructive',
+                    title: 'Erro ao deletar Funcionário!',
+                    description: `O Produto ${row.getValue('name')} não foi deletado`,
                   })
+                  console.error(error)
                 }
               }}
             >
