@@ -27,47 +27,50 @@ import { createOrderItems } from './routes/create-order-items'
 dotenv.config()
 export const server = fastify()
 
-server.register(fastifyCookie, {
-  secret: 'supersecretCookie',
-  parseOptions: {
-    sameSite: 'none',
-  },
+// server.register(fastifyCookie, {
+//   secret: 'supersecretCookie',
+//   parseOptions: {
+//     sameSite: 'none',
+//   },
+// })
+// server.register(fastifyCors, {
+//   origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
+//   credentials: true,
+// })
+
+// server.register(fastifyJwt, {
+//   secret: 'supersecret',
+// })
+// server.register(getCustomer)
+// server.register(createCustomer)
+// server.register(deleteCustomer)
+
+// server.register(getProducts)
+// server.register(createProduct)
+// server.register(deleteProduct)
+
+// server.register(GetMonthRevenue)
+// server.register(groupRoutes)
+
+// server.register(loginRoute)
+// server.register(userRoute)
+
+// server.register(getDistributor)
+// server.register(createDistributor)
+
+// server.register(createShipment)
+// server.register(getShipment)
+// server.register(deleteShipment)
+
+// server.register(deleteUser)
+
+// server.register(createOrder)
+// server.register(getOrders)
+// server.register(deleteOrder)
+// server.register(createOrderItems)
+server.get('/', (req, res) => {
+  return res.status(200).send('Hello there')
 })
-server.register(fastifyCors, {
-  origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
-  credentials: true,
-})
-
-server.register(fastifyJwt, {
-  secret: 'supersecret',
-})
-server.register(getCustomer)
-server.register(createCustomer)
-server.register(deleteCustomer)
-
-server.register(getProducts)
-server.register(createProduct)
-server.register(deleteProduct)
-
-server.register(GetMonthRevenue)
-server.register(groupRoutes)
-
-server.register(loginRoute)
-server.register(userRoute)
-
-server.register(getDistributor)
-server.register(createDistributor)
-
-server.register(createShipment)
-server.register(getShipment)
-server.register(deleteShipment)
-
-server.register(deleteUser)
-
-server.register(createOrder)
-server.register(getOrders)
-server.register(deleteOrder)
-server.register(createOrderItems)
 
 server.listen({ port: 3333 }).then(() => {
   console.log(`🚀 HTTP Server running on port: 3333 🚀`)
