@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   CartesianGrid,
   Line,
@@ -22,37 +22,48 @@ import { Label } from '../ui/label'
 
 const data = [
   {
-    date: '05/02',
+    date: '05/02/2024',
     revenue: 1000,
     cost: 750,
   },
   {
-    date: '06/02',
+    date: '06/02/2024',
     revenue: 1500,
     cost: 800,
   },
   {
-    date: '07/02',
+    date: '07/02/2024',
     revenue: 800,
     cost: 1200,
   },
   {
-    date: '08/02',
+    date: '08/02/2024',
     revenue: 2500,
     cost: 1500,
   },
   {
-    date: '09/02',
+    date: '09/02/2024',
     revenue: 700,
     cost: 500,
   },
   {
-    date: '10/02',
+    date: '10/02/2024',
     revenue: 500,
     cost: 1800,
   },
 ]
 export default function RevenueChart() {
+  const [statistics, setStatistics] = useState([])
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_KEY}/metrics/month-revenue`)
+      .then((data) => {
+        return data.json()
+      })
+      .then((statistics) => {
+        setStatistics(statistics)
+      })
+  }, [])
+  console.log(statistics)
   const [isChecked, setIsChecked] = useState(false)
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked) // Toggle the state
@@ -87,7 +98,7 @@ export default function RevenueChart() {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={240}>
-          <LineChart data={data} style={{ fontSize: 12 }}>
+          <LineChart data={statistics} style={{ fontSize: 12 }}>
             <XAxis dataKey="date" tickLine={false} axisLine={false} dy={16} />
             <YAxis
               stroke="#888"
