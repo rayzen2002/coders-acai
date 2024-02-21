@@ -4,20 +4,29 @@ import dayjs from 'dayjs'
 import { prisma } from '../../infra/prisma/database'
 
 export async function GetMonthRevenue(server: FastifyInstance) {
-  server.get('/metrics/month-revenue', { preHandler: [auth] }, async (req) => {
-    const today = dayjs()
-    const lastMonth = today.subtract(1, 'month')
-    const startOfLastMonth = lastMonth.startOf('month')
+  server.get(
+    '/metrics/month-revenue',
+    { preHandler: [auth] },
+    async (req, res) => {
+      const orders = await prisma.orders.groupBy({
+        by: ['createdAt', 'total_in_cents'],
+        orderBy: {
+          createdAt: 'asc',
+        },
+      })
 
-    const lastMonthWithYear = lastMonth.format('YYYY-MM')
-    const currentMonthWithYear = today.format('YYYY-MM')
+      const groupedOrders = orders.reduce((acc, order) => {
+        const date = dayjs(order.createdAt).format('YYYY-MM-DD')
+        if (!acc[date]) {
+          acc[date] = []
+        }
+        acc[date].push(order)
+        return acc
+      }, {})
 
-    const monthRevenue = await prisma.orders.groupBy({
-      by: 'customerId',
-      _sum: {
-        total_in_cents: true,
-      },
-    })
-    return monthRevenue
-  })
+      const result = Object.values(groupedOrders)
+      console.log(result)
+      return res.send(result)
+    },
+  )
 }
