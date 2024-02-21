@@ -115,7 +115,6 @@ export function DataTable<TData, TValue>({
       description: newProduct.description,
       price_in_cents: bodyPrice,
     }
-    console.log(JSON.stringify(body))
     try {
       const productResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/product`,
