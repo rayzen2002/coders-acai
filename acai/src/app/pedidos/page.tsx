@@ -27,7 +27,7 @@ export default async function Shipments() {
           Pedidos
         </h1>
       </div>
-      <OrderDataTable data={orders.reverse()} columns={columns} />
+      <OrderDataTable data={orders ? orders.reverse() : []} columns={columns} />
     </>
   )
 }

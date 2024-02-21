@@ -40,7 +40,10 @@ export default async function Funcionarios() {
         </div>
       </div>
       <div className="px-6">
-        <UsersDataTable columns={columns} data={[...employees.users]} />
+        <UsersDataTable
+          columns={columns}
+          data={employees ? [...employees.users] : []}
+        />
       </div>
     </>
   )

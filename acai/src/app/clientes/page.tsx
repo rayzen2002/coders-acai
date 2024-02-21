@@ -64,7 +64,7 @@ export default async function Customers() {
 
       <CustomersDataTable
         columns={columns}
-        data={[...apiCustomers.customers.reverse()]}
+        data={apiCustomers ? [...apiCustomers.customers.reverse()] : []}
       />
     </>
   )
