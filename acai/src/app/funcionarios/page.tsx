@@ -27,24 +27,29 @@ export default async function Funcionarios() {
       },
     },
   )
-  const employees: UsersAPI = await getEmployeesApiCall.json()
-  return (
-    <>
-      <Header />
-      <div className="flex flex-col">
-        <div className="flex justify-center items-center">
-          <h1 className="mx-auto text-3xl py-6 flex gap-2 items-center text-muted-foreground font-bold">
-            <Users className="w-12 h-12" />
-            Funcionários
-          </h1>
+  try {
+    const employees: UsersAPI = await getEmployeesApiCall.json()
+    return (
+      <>
+        <Header />
+        <div className="flex flex-col">
+          <div className="flex justify-center items-center">
+            <h1 className="mx-auto text-3xl py-6 flex gap-2 items-center text-muted-foreground font-bold">
+              <Users className="w-12 h-12" />
+              Funcionários
+            </h1>
+          </div>
         </div>
-      </div>
-      <div className="px-6">
-        <UsersDataTable
-          columns={columns}
-          data={employees ? [...employees.users] : []}
-        />
-      </div>
-    </>
-  )
+        <div className="px-6">
+          <UsersDataTable
+            columns={columns}
+            data={employees ? [...employees.users] : []}
+          />
+        </div>
+      </>
+    )
+  } catch (error) {
+    console.error(error)
+    return <h1>Error</h1>
+  }
 }

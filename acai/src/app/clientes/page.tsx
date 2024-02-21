@@ -37,38 +37,43 @@ const randomCustommers = faker.helpers.multiple(createRandomCustomer, {
 })
 
 export default async function Customers() {
-  const apiCustomers: ApiCustomers = await fetch(
-    `${process.env.NEXT_PUBLIC_API_KEY}/customers`,
-    {
-      next: {
-        revalidate: 1,
-        tags: ['customers'],
+  try {
+    const apiCustomers: ApiCustomers = await fetch(
+      `${process.env.NEXT_PUBLIC_API_KEY}/customers`,
+      {
+        next: {
+          revalidate: 1,
+          tags: ['customers'],
+        },
       },
-    },
-  )
-    .then((response) => {
-      if (response) {
-        return response.json()
-      }
-    })
-    .then((data) => {
-      return data
-    })
-  console.log(apiCustomers)
-  return (
-    <>
-      <Header />
-      <div className="flex flex-col">
-        <h1 className="mx-auto text-3xl py-6 flex gap-2 items-center text-muted-foreground font-bold">
-          <UserSquare className="w-12 h-12" />
-          Clientes
-        </h1>
-      </div>
+    )
+      .then((response) => {
+        if (response) {
+          return response.json()
+        }
+      })
+      .then((data) => {
+        return data
+      })
+    console.log(apiCustomers)
+    return (
+      <>
+        <Header />
+        <div className="flex flex-col">
+          <h1 className="mx-auto text-3xl py-6 flex gap-2 items-center text-muted-foreground font-bold">
+            <UserSquare className="w-12 h-12" />
+            Clientes
+          </h1>
+        </div>
 
-      <CustomersDataTable
-        columns={columns}
-        data={apiCustomers ? [...apiCustomers.customers.reverse()] : []}
-      />
-    </>
-  )
+        <CustomersDataTable
+          columns={columns}
+          data={apiCustomers ? [...apiCustomers.customers.reverse()] : []}
+        />
+      </>
+    )
+  } catch (error) {
+    console.error(error)
+    return <h1>Error</h1>
+  }
 }
