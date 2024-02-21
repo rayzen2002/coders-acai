@@ -34,7 +34,7 @@ server.register(fastifyCookie, {
   },
 })
 server.register(fastifyCors, {
-  origin: '*',
+  origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
   credentials: true,
 })
 
