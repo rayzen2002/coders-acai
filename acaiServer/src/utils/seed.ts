@@ -99,11 +99,11 @@ const seedDatabase = async () => {
   const groups = await prisma.groups.findMany()
   for (let j = 0; j < randomUsers.length; j++) {
     const user = randomUsers[j]
-    const group = groups[j] // Get the group at the same index as the user
+    const group = groups[j]
 
     if (!group) {
       console.error(`Group not found for user ${user.name}`)
-      continue // Skip creating the user if group is not found
+      continue
     }
 
     await prisma.user.create({
@@ -160,11 +160,14 @@ const seedDatabase = async () => {
   console.log(chalk.yellow('✔ Created Customers'))
 
   const customers = await prisma.customers.findMany()
+  const type = ['Buy', 'Sell']
   await prisma.orders.createMany({
     data: customers.map((customer) => {
       return {
         customerId: customer.id,
         total_in_cents: 0,
+        createdAt: faker.date.past({ refDate: new Date() }),
+        type: type[faker.number.int({ min: 0, max: 1 })],
       }
     }),
   })

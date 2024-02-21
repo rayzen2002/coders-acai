@@ -48,6 +48,11 @@ model Products {
   distributorId  String?
 }
 
+enum Type {
+  Buy
+  Sell
+}
+
 model Orders {
   id             String       @id @default(uuid())
   total_in_cents Int
@@ -55,6 +60,7 @@ model Orders {
   customerId     String
   createdAt      DateTime     @default(now())
   OrderItems     OrderItems[]
+  type           Type
 
   // relation with orderItems, Custommers and Distributors
 }
