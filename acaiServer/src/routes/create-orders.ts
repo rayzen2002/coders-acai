@@ -59,7 +59,10 @@ export async function createOrder(server: FastifyInstance) {
 
       Promise.all(
         orderItemsBodies.map((orderItemsBody) => {
-          return axios.post(`http://localhost:3333/order-item`, orderItemsBody)
+          return axios.post(
+            `https://coders-acai-pm2c.vercel.app/order-item`,
+            orderItemsBody,
+          )
         }),
       )
       const totalInCentsArray = products.map((product, i) => {

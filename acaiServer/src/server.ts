@@ -34,10 +34,10 @@ server.register(fastifyCookie, {
   },
 })
 server.register(fastifyCors, {
-  origin: true,
-  // origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
+  origin: '*',
   credentials: true,
 })
+
 server.register(fastifyJwt, {
   secret: 'supersecret',
 })
