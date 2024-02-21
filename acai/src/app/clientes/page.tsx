@@ -47,11 +47,14 @@ export default async function Customers() {
     },
   )
     .then((response) => {
-      return response.json()
+      if (response) {
+        return response.json()
+      }
     })
     .then((data) => {
       return data
     })
+  console.log(apiCustomers)
   return (
     <>
       <Header />
