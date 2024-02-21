@@ -58,8 +58,6 @@ import { toast } from '@/components/ui/use-toast'
 import action from '@/lib/api/actions'
 import { cn } from '@/lib/utils'
 
-import { Products } from '../produtos/columns'
-
 interface ProductsArray {
   id: string
   name: string
@@ -112,7 +110,6 @@ const OrderSchema = z.object({
   }),
   createdAt: z.date().default(new Date()),
 })
-type OrderValues = z.infer<typeof OrderSchema>
 
 export function OrderDataTable<TData, TValue>({
   columns,
@@ -305,24 +302,7 @@ export function OrderDataTable<TData, TValue>({
                       )}
                     />
                   </div>
-                  {/* <div className="grid grid-cols-4 items-center">
-                    <Label className="col-span-2">Número de Produtos</Label>
-                    <Input
-                      id="number-of-order-items"
-                      placeholder="Número"
-                      className="col-span-1"
-                      {...form.register('number-of-order-items')}
-                    />
-                  </div> */}
-                  {/* <div className="flex items-center gap-8">
-                    <Label htmlFor="product">Produto</Label>
-                    <Input
-                      id="product"
-                      placeholder="Endereço do Pedido"
-                      className="col-span-3"
-                      {...form.register('orderItems.productName')}
-                    />
-                  </div> */}
+
                   <div className="grid grid-cols-4 items-center">
                     <FormField
                       control={form.control}

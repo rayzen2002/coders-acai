@@ -327,7 +327,7 @@ export const columns: ColumnDef<Orders>[] = [
                     action('orders')
                     toast({
                       variant: 'default',
-                      title: 'Produto deletado com sucesso!',
+                      title: 'Pedido deletado com sucesso!',
                       description: `O Pedido  foi deletado`,
                     })
                   } else {
@@ -337,7 +337,7 @@ export const columns: ColumnDef<Orders>[] = [
                   console.error(error)
                   toast({
                     variant: 'destructive',
-                    title: 'Erro ao deletar Funcionário!',
+                    title: 'Erro ao deletar Pedido!',
                     description: `O Pedido não foi deletado`,
                   })
                 }
