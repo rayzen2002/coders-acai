@@ -70,7 +70,7 @@ server.register(deleteOrder)
 server.register(createOrderItems)
 
 server
-  .listen({ port: 6666 })
+  .listen({ port: 3333 })
   .then(() => {
     console.log(`🚀 HTTP Server running on port: 3333 🚀`)
   })
