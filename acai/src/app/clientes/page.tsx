@@ -74,6 +74,6 @@ export default async function Customers() {
     )
   } catch (error) {
     console.error(error)
-    return <h1>Error</h1>
+    return <h1>Error``</h1>
   }
 }
