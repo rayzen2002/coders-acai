@@ -26,6 +26,7 @@ import { createOrderItems } from './routes/create-order-items'
 
 dotenv.config()
 const server = fastify()
+const port = process.env.PORT || 3333
 
 server.register(fastifyCors, {
   origin: '*',
@@ -71,12 +72,13 @@ server.register(createOrderItems)
 server.get('/', (req, res) => {
   return res.status(200).send('Hello')
 })
-server
-  .listen({ port: 3333 })
-  .then(() => {
-    console.log(`🚀 HTTP Server running on port: 3333 🚀`)
-  })
-  .catch((error) => {
-    console.error('Error starting the server:', error)
-  })
+// server
+//   .listen({ port: 3333 })
+//   .then(() => {
+//     console.log(`🚀 HTTP Server running on port: 3333 🚀`)
+//   })
+//   .catch((error) => {
+//     console.error('Error starting the server:', error)
+//   })
+server.listen(port, () => console.log(`Server is running on port : 3333 🚀`))
 export default server
