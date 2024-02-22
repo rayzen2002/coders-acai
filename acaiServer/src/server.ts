@@ -68,12 +68,13 @@ server.register(createOrder)
 server.register(getOrders)
 server.register(deleteOrder)
 server.register(createOrderItems)
-try {
-  server.listen({ port: 3333 }).then(() => {
+
+server
+  .listen({ port: 3333 })
+  .then(() => {
     console.log(`🚀 HTTP Server running on port: 3333 🚀`)
   })
-} catch (error) {
-  console.error(error)
-}
-
+  .catch((error) => {
+    console.error('Error starting the server:', error)
+  })
 export default server
