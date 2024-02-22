@@ -35,7 +35,7 @@ server.register(fastifyCookie, {
 })
 server.register(fastifyCors, {
   origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
-  credentials: true,
+  credentials: false,
 })
 
 server.register(fastifyJwt, {
@@ -70,7 +70,7 @@ server.register(deleteOrder)
 server.register(createOrderItems)
 
 server
-  .listen({ port: 3333 })
+  .listen({ port: 6666 })
   .then(() => {
     console.log(`🚀 HTTP Server running on port: 3333 🚀`)
   })
