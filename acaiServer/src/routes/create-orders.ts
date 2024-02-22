@@ -5,6 +5,7 @@ import { prisma } from '../../infra/prisma/database'
 import axios from 'axios'
 
 export async function createOrder(server: FastifyInstance) {
+  const URL = 'https://coders-acai-pm2c.vercel.app'
   server.post('/order', { preHandler: [auth] }, async (req, res) => {
     const orderSchema = z.object({
       customerName: z.string(),
@@ -31,6 +32,7 @@ export async function createOrder(server: FastifyInstance) {
         data: {
           customerId: customer.id,
           total_in_cents: 0,
+          type: 'Sell',
         },
       })
       const productsNames = orderValues.orderItems.map((orderItem) => {
@@ -59,10 +61,7 @@ export async function createOrder(server: FastifyInstance) {
 
       Promise.all(
         orderItemsBodies.map((orderItemsBody) => {
-          return axios.post(
-            `https://coders-acai-pm2c.vercel.app/order-item`,
-            orderItemsBody,
-          )
+          return axios.post(`${URL}/order-item`, orderItemsBody)
         }),
       )
       const totalInCentsArray = products.map((product, i) => {
