@@ -27,48 +27,50 @@ import { createOrderItems } from './routes/create-order-items'
 dotenv.config()
 const server = fastify()
 
-server.register(fastifyCors, {
-  origin: '*',
+// server.register(fastifyCors, {
+//   origin: '*',
+// })
+
+// server.register(fastifyJwt, {
+//   secret: 'supersecret',
+// })
+
+// server.register(fastifyCookie, {
+//   secret: 'supersecretCookie',
+//   parseOptions: {
+//     sameSite: 'none',
+//   },
+// })
+// server.register(getCustomer)
+// server.register(createCustomer)
+// server.register(deleteCustomer)
+
+// server.register(getProducts)
+// server.register(createProduct)
+// server.register(deleteProduct)
+
+// server.register(GetMonthRevenue)
+// server.register(groupRoutes)
+
+// server.register(loginRoute)
+// server.register(userRoute)
+
+// server.register(getDistributor)
+// server.register(createDistributor)
+
+// server.register(createShipment)
+// server.register(getShipment)
+// server.register(deleteShipment)
+
+// server.register(deleteUser)
+
+// server.register(createOrder)
+// server.register(getOrders)
+// server.register(deleteOrder)
+// server.register(createOrderItems)
+server.get('/', (req, res) => {
+  return res.status(200).send('Hello')
 })
-
-server.register(fastifyJwt, {
-  secret: 'supersecret',
-})
-
-server.register(fastifyCookie, {
-  secret: 'supersecretCookie',
-  parseOptions: {
-    sameSite: 'none',
-  },
-})
-server.register(getCustomer)
-server.register(createCustomer)
-server.register(deleteCustomer)
-
-server.register(getProducts)
-server.register(createProduct)
-server.register(deleteProduct)
-
-server.register(GetMonthRevenue)
-server.register(groupRoutes)
-
-server.register(loginRoute)
-server.register(userRoute)
-
-server.register(getDistributor)
-server.register(createDistributor)
-
-server.register(createShipment)
-server.register(getShipment)
-server.register(deleteShipment)
-
-server.register(deleteUser)
-
-server.register(createOrder)
-server.register(getOrders)
-server.register(deleteOrder)
-server.register(createOrderItems)
-
 server
   .listen({ port: 6666 })
   .then(() => {
