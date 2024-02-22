@@ -27,19 +27,19 @@ import { createOrderItems } from './routes/create-order-items'
 dotenv.config()
 const server = fastify()
 
+server.register(fastifyCors, {
+  origin: '*',
+})
+
+server.register(fastifyJwt, {
+  secret: 'supersecret',
+})
+
 server.register(fastifyCookie, {
   secret: 'supersecretCookie',
   parseOptions: {
     sameSite: 'none',
   },
-})
-server.register(fastifyCors, {
-  origin: ['https://coders-acai.vercel.app', 'http://localhost:3000'],
-  credentials: false,
-})
-
-server.register(fastifyJwt, {
-  secret: 'supersecret',
 })
 server.register(getCustomer)
 server.register(createCustomer)

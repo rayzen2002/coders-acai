@@ -55,8 +55,13 @@ const data = [
 export default function RevenueChart() {
   const [statistics, setStatistics] = useState([])
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_KEY}/metrics/month-revenue`)
+    fetch(`${process.env.NEXT_PUBLIC_API_KEY}/metrics/month-revenue`, {
+      mode: 'no-cors',
+    })
       .then((data) => {
+        if (!data) {
+          return
+        }
         return data.json()
       })
       .then((statistics) => {
