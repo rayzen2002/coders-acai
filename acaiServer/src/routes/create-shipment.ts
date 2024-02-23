@@ -42,3 +42,5 @@ export async function createShipment(server: FastifyInstance) {
     }
   })
 }
+
+export default createShipment

@@ -22,3 +22,4 @@ export async function getCustomer(server: FastifyInstance) {
     }
   })
 }
+export default getCustomer

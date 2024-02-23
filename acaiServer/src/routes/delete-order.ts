@@ -27,3 +27,5 @@ export async function deleteOrder(server: FastifyInstance) {
     }
   })
 }
+
+export default deleteOrder

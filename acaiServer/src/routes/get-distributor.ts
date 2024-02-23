@@ -13,3 +13,4 @@ export async function getDistributor(server: FastifyInstance) {
     }
   })
 }
+export default getDistributor

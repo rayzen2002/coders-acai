@@ -62,3 +62,4 @@ export async function GetMonthRevenue(server: FastifyInstance) {
     },
   )
 }
+export default GetMonthRevenue

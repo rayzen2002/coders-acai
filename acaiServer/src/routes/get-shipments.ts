@@ -13,3 +13,4 @@ export async function getShipment(server: FastifyInstance) {
     }
   })
 }
+export default getShipment

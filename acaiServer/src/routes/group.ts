@@ -53,3 +53,4 @@ export async function groupRoutes(server: FastifyInstance) {
     },
   )
 }
+export default groupRoutes

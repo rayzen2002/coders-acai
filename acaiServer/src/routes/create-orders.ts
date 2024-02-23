@@ -89,3 +89,5 @@ export async function createOrder(server: FastifyInstance) {
     }
   })
 }
+
+export default createOrder

@@ -25,3 +25,5 @@ export async function createProduct(server: FastifyInstance) {
     }
   })
 }
+
+export default createProduct

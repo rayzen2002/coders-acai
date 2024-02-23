@@ -21,3 +21,5 @@ export async function createDistributor(server: FastifyInstance) {
     }
   })
 }
+
+export default createDistributor

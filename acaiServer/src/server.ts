@@ -80,3 +80,5 @@ server
   .catch((error) => {
     console.error('Error starting the server:', error)
   })
+
+export default server

@@ -36,3 +36,5 @@ export async function createCustomer(server: FastifyInstance) {
     }
   })
 }
+
+export default createCustomer

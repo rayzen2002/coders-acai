@@ -18,3 +18,4 @@ export async function getOrders(server: FastifyInstance) {
     }
   })
 }
+export default getOrders

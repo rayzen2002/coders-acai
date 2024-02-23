@@ -26,3 +26,4 @@ export async function getProducts(server: FastifyInstance) {
     return product
   })
 }
+export default getProducts

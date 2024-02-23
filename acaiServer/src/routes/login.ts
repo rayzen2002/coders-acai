@@ -51,3 +51,4 @@ export async function loginRoute(server: FastifyInstance) {
     }
   })
 }
+export default loginRoute

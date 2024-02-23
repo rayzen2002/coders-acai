@@ -100,3 +100,5 @@ export async function userRoute(server: FastifyInstance) {
     return { user }
   })
 }
+
+export default userRoute

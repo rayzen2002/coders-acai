@@ -22,3 +22,5 @@ export async function deleteShipment(server: FastifyInstance) {
     }
   })
 }
+
+export default deleteShipment

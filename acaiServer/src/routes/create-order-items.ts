@@ -27,3 +27,5 @@ export async function createOrderItems(server: FastifyInstance) {
     }
   })
 }
+
+export default createOrderItems

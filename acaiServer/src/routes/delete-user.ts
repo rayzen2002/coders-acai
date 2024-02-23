@@ -39,3 +39,4 @@ export async function deleteUser(server: FastifyInstance) {
     }
   })
 }
+export default deleteUser

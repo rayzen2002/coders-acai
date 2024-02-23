@@ -21,3 +21,5 @@ export async function deleteCustomer(server: FastifyInstance) {
     }
   })
 }
+
+export default deleteCustomer

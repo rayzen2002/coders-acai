@@ -22,3 +22,4 @@ export async function deleteProduct(server: FastifyInstance) {
     }
   })
 }
+export default deleteProduct

@@ -60,3 +60,4 @@ export async function getMonthTotalRevenue(server: FastifyInstance) {
     return res.status(200).send(ordersForCard)
   })
 }
+export default getMonthTotalRevenue
