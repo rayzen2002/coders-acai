@@ -23,6 +23,7 @@ import { deleteOrder } from './routes/delete-order'
 import { createDistributor } from './routes/create-distributors'
 import { createOrder } from './routes/create-orders'
 import { createOrderItems } from './routes/create-order-items'
+import { getMonthTotalRevenue } from './routes/get-months-revenue'
 
 dotenv.config()
 const server = fastify()
@@ -68,6 +69,8 @@ server.register(createOrder)
 server.register(getOrders)
 server.register(deleteOrder)
 server.register(createOrderItems)
+
+server.register(getMonthTotalRevenue)
 
 server
   .listen({ port: 3333 })

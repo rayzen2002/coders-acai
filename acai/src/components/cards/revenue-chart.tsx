@@ -63,12 +63,10 @@ export default function RevenueChart() {
         setStatistics(statistics)
       })
   }, [])
-  console.log(statistics)
   const [isChecked, setIsChecked] = useState(false)
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked) // Toggle the state
   }
-  console.log(isChecked)
   return (
     <Card className="col-span-6">
       <CardHeader className="flex-row items-center justify-between pb-8">

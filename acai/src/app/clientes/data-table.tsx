@@ -94,7 +94,6 @@ export function CustomersDataTable<TData, TValue>({
       ...newCustomer,
     }
     try {
-      console.log(newCustomer)
       const createCustomer = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/customer`,
         {

@@ -55,7 +55,7 @@ export default async function Customers() {
       .then((data) => {
         return data
       })
-    console.log(apiCustomers)
+
     return (
       <>
         <Header />

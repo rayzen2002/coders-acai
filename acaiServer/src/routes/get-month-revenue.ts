@@ -4,7 +4,6 @@ import dayjs from 'dayjs'
 import { prisma } from '../../infra/prisma/database'
 
 interface Order {
-  [{}]
   date: Date
   revenue: number
   cost: number
