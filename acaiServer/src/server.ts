@@ -27,7 +27,7 @@ import { getMonthTotalRevenue } from './routes/get-months-revenue'
 
 dotenv.config()
 export const server = fastify({ logger: true })
-
+const port = process.env.PORT ? parseInt(process.env.PORT) : 3333
 server.register(fastifyCookie, {
   secret: 'supersecretCookie',
   parseOptions: {
@@ -73,7 +73,7 @@ server.register(createOrderItems)
 server.register(getMonthTotalRevenue)
 console.log('Server initialization started.') // Add logging statement
 server
-  .listen({ port: 3333 })
+  .listen({ port })
   .then(() => {
     console.log(`🚀 HTTP Server running on port: 3333 🚀`)
     console.log('Server initialization completed.')
