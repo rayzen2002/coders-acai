@@ -26,7 +26,7 @@ import { createOrderItems } from './routes/create-order-items'
 import { getMonthTotalRevenue } from './routes/get-months-revenue'
 
 dotenv.config()
-const server = fastify()
+export const server = fastify()
 
 server.register(fastifyCookie, {
   secret: 'supersecretCookie',
@@ -80,4 +80,3 @@ server
   .catch((error) => {
     console.error('Error starting the server:', error)
   })
-export default server

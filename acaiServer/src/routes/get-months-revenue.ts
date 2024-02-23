@@ -45,7 +45,6 @@ export async function getMonthTotalRevenue(server: FastifyInstance) {
           parseInt(order.month) ===
           parseInt(dayjs().subtract(1, 'M').format('MM'))
         ) {
-          console.log('cai aqui')
           totalRevenueForLastMonth = totalRevenueForLastMonth + order.revenue
           ordersForCard[1] = {
             revenue: totalRevenueForLastMonth,
@@ -58,7 +57,6 @@ export async function getMonthTotalRevenue(server: FastifyInstance) {
       },
       [],
     )
-    console.log(ordersForCard)
     return res.status(200).send(ordersForCard)
   })
 }
