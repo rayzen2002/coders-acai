@@ -11,7 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watchAll",
     "vercel-build": "npx prisma generate && npx prisma migrate deploy",
-    "seed": "tsx src/utils/seed.ts"
+    "seed": "tsx src/utils/seed.ts",
+    "build": "tsup src",
+    "start": "node dist/src/server.js"
   },
   "prisma": {
     "schema": "infra/prisma/schema.prisma"

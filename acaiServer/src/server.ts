@@ -71,11 +71,12 @@ server.register(deleteOrder)
 server.register(createOrderItems)
 
 server.register(getMonthTotalRevenue)
-
+console.log('Server initialization started.') // Add logging statement
 server
   .listen({ port: 3333 })
   .then(() => {
     console.log(`🚀 HTTP Server running on port: 3333 🚀`)
+    console.log('Server initialization completed.')
   })
   .catch((error) => {
     console.error('Error starting the server:', error)
