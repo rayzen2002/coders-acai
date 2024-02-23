@@ -26,7 +26,7 @@ import { createOrderItems } from './routes/create-order-items'
 import { getMonthTotalRevenue } from './routes/get-months-revenue'
 
 dotenv.config()
-export const server = fastify()
+export const server = fastify({ logger: true })
 
 server.register(fastifyCookie, {
   secret: 'supersecretCookie',
