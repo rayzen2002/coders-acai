@@ -19,12 +19,15 @@ export async function GetMonthRevenue(server: FastifyInstance) {
           createdAt: 'asc',
         },
       })
-
-      const groupedOrders = orders.reduce((acc, order) => {
+      const thisYearOrders = orders.filter(
+        (order) => dayjs(order.createdAt).year() === dayjs().year(),
+      )
+      const groupedOrders = thisYearOrders.reduce((acc, order) => {
         const date = dayjs(order.createdAt).format('YYYY-MM-DD')
         if (!acc[date]) {
           acc[date] = []
         }
+
         if (order.type === 'Sell') {
           acc[date].push({
             date: dayjs(order.createdAt),

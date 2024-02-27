@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 interface order {
   revenue: number
-  month: string
-  year: string
+  date: string
+  cost: string
 }
 export default function MonthOrdersAmountCard() {
   const [monthRevenue, setMonthRevenue] = useState<order[]>([])
   try {
     useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_API_KEY}/metrics/month-total-revenue`)
+      fetch(`${process.env.NEXT_PUBLIC_API_KEY}/metrics/month-revenue`)
         .then((data) => {
           return data.json()
         })
@@ -24,14 +24,15 @@ export default function MonthOrdersAmountCard() {
     console.error(error)
   }
   const actualMonth = monthRevenue.filter((order) => {
-    return parseInt(order.month) === dayjs().month() + 1
+    return dayjs(order.date).month() === dayjs().month()
   })
   const lastMonth = monthRevenue.filter((order) => {
-    return parseInt(order.month) === dayjs().month()
+    return dayjs(order.date).month() === dayjs().month() - 1
   })
   const diff =
-    (actualMonth.length - lastMonth.length) /
-    (actualMonth.length + lastMonth.length)
+    ((actualMonth.length - lastMonth.length) /
+      (actualMonth.length + lastMonth.length)) *
+    100
   return (
     <>
       <Card>

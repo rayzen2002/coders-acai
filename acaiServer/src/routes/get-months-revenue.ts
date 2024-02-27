@@ -1,65 +1,89 @@
-import dayjs from 'dayjs'
 import { FastifyInstance } from 'fastify'
+import { auth } from '../../lib/auth'
+import dayjs from 'dayjs'
 import { prisma } from '../../infra/prisma/database'
 
-interface newOrders {
+interface Order {
+  date: Date
   revenue: number
-  month: string
-  year: string
+  cost: number
 }
-export async function getMonthTotalRevenue(server: FastifyInstance) {
-  server.get('/metrics/month-total-revenue', async (_, res) => {
-    const date = dayjs()
-    const actualMonth = date.format('MM')
-    const lastMonth = date.subtract(1, 'M').format('MM')
-    const actualYear = date.format('YYYY')
-    const orders = await prisma.orders.findMany()
-    const newOrders: newOrders[] = []
+export async function GetMonthTotalRevenue(server: FastifyInstance) {
+  server.get(
+    '/metrics/month-total-revenue',
+    { preHandler: [auth] },
+    async (req, res) => {
+      const orders = await prisma.orders.groupBy({
+        by: ['createdAt', 'total_in_cents', 'type'],
+        orderBy: {
+          createdAt: 'asc',
+        },
+      })
 
-    orders.forEach((order) => {
-      if (
-        (dayjs(order.createdAt).format('MM') === actualMonth &&
-          dayjs(order.createdAt).format('YYYY') === actualYear) ||
-        (dayjs(order.createdAt).format('MM') === lastMonth &&
-          dayjs(order.createdAt).format('YYYY') === actualYear)
-      ) {
-        newOrders.push({
-          revenue: order.total_in_cents,
-          month: dayjs(order.createdAt).format('MM'),
-          year: dayjs(order.createdAt).format('YYYY'),
-        })
-      }
-    })
-    let totalRevenueForActualMonth = 0
-    let totalRevenueForLastMonth = 0
-    return res.status(200).send(newOrders)
-    const ordersForCard: newOrders[] = newOrders.reduce(
-      (ordersForCard: newOrders[], order) => {
-        if (order.month === dayjs().format('MM')) {
-          totalRevenueForActualMonth =
-            totalRevenueForActualMonth + order.revenue
-          ordersForCard[0] = {
-            revenue: totalRevenueForActualMonth,
-            month: dayjs().format('MM'),
-            year: dayjs().format('YYYY'),
-          }
-        } else if (
-          parseInt(order.month) ===
-          parseInt(dayjs().subtract(1, 'M').format('MM'))
-        ) {
-          totalRevenueForLastMonth = totalRevenueForLastMonth + order.revenue
-          ordersForCard[1] = {
-            revenue: totalRevenueForLastMonth,
-            month: dayjs().subtract(1, 'M').format('MM'),
-            year: dayjs().format('YYYY'),
-          }
+      const groupedOrders = orders.reduce((acc, order) => {
+        const date = dayjs(order.createdAt).format('YYYY-MM-DD')
+        if (!acc[date]) {
+          acc[date] = []
+        }
+        if (order.type === 'Sell') {
+          acc[date].push({
+            date: dayjs(order.createdAt),
+            revenue: order.total_in_cents,
+            cost: 0,
+          })
+        }
+        if (order.type === 'Buy') {
+          acc[date].push({
+            date: dayjs(order.createdAt),
+            revenue: 0,
+            cost: order.total_in_cents,
+          })
         }
 
-        return ordersForCard
-      },
-      [],
-    )
-    return res.status(200).send(ordersForCard)
-  })
+        return acc
+      }, {})
+      const result: Order[][] = Object.values(groupedOrders)
+
+      const newOrderStructure = result.map((orders) => {
+        let revenue = 0
+        let cost = 0
+
+        orders.forEach((order) => {
+          revenue += order.revenue
+          cost += order.cost
+        })
+        return {
+          date: orders[0].date,
+          revenue,
+          cost,
+        }
+      })
+      const ordersFromThisMonth = newOrderStructure.filter((order) => {
+        return (
+          (dayjs(order.date).month() === dayjs().month() &&
+            dayjs(order.date).year() === dayjs().year()) ||
+          (dayjs(order.date).month() === dayjs().subtract(1, 'M').month() &&
+            dayjs(order.date).year() === dayjs().year())
+        )
+      })
+      const sumReducer = (acc, entry) => {
+        acc.revenue += entry.revenue
+        acc.cost += entry.cost
+        return acc
+      }
+
+      const month1Data = ordersFromThisMonth
+        .filter((entry) => new Date(entry.date).getMonth() === 0)
+        .reduce(sumReducer, { revenue: 0, cost: 0 })
+
+      const month2Data = ordersFromThisMonth
+        .filter((entry) => new Date(entry.date).getMonth() === 1)
+        .reduce(sumReducer, { revenue: 0, cost: 0 })
+
+      const response = [month2Data, month1Data]
+      console.log(response)
+      return res.send(response)
+    },
+  )
 }
-export default getMonthTotalRevenue
+export default GetMonthTotalRevenue
