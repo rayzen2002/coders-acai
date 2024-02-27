@@ -15,6 +15,7 @@ export async function getMonthTotalRevenue(server: FastifyInstance) {
     const actualYear = date.format('YYYY')
     const orders = await prisma.orders.findMany()
     const newOrders: newOrders[] = []
+
     orders.forEach((order) => {
       if (
         (dayjs(order.createdAt).format('MM') === actualMonth &&
@@ -31,6 +32,7 @@ export async function getMonthTotalRevenue(server: FastifyInstance) {
     })
     let totalRevenueForActualMonth = 0
     let totalRevenueForLastMonth = 0
+    return res.status(200).send(newOrders)
     const ordersForCard: newOrders[] = newOrders.reduce(
       (ordersForCard: newOrders[], order) => {
         if (order.month === dayjs().format('MM')) {

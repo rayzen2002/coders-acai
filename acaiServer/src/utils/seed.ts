@@ -35,7 +35,7 @@ const createRandomProduct = () => {
 }
 
 const randomProducts = faker.helpers.multiple(createRandomProduct, {
-  count: 15,
+  count: 30,
 })
 
 const createRandomDistributor = () => {
@@ -146,6 +146,28 @@ const seedDatabase = async () => {
   })
   console.log(chalk.yellow('✔ Created Products'))
 
+  await prisma.customers.createMany({
+    data: randomCustommers.map((customer) => {
+      return {
+        name: customer.name,
+        address: customer.address,
+        email: customer.email,
+        distributorId:
+          randomDistributors[faker.number.int({ min: 0, max: 4 })].id,
+      }
+    }),
+  })
+  await prisma.customers.createMany({
+    data: randomCustommers.map((customer) => {
+      return {
+        name: customer.name,
+        address: customer.address,
+        email: customer.email,
+        distributorId:
+          randomDistributors[faker.number.int({ min: 0, max: 4 })].id,
+      }
+    }),
+  })
   await prisma.customers.createMany({
     data: randomCustommers.map((customer) => {
       return {

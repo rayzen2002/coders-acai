@@ -32,8 +32,11 @@ export async function getCustomerCard(server: FastifyInstance) {
             )
             return {
               name: customer.name,
-              produto: filteredOrders[0].OrderItems[0].product.price_in_cents,
-              total: filteredOrders[0].total_in_cents,
+              produto:
+                (filteredOrders[0].OrderItems[0].product.price_in_cents *
+                  filteredOrders[0].OrderItems[0].quantity) /
+                100,
+              total: filteredOrders[0].total_in_cents / 100,
             }
           })
         customersWithFilteredOrders.sort((a, b) => b.total - a.total)

@@ -33,10 +33,12 @@ export function RecentSales() {
             <div className="ml-auto font-medium">
               {sale.type === 'Sell' ? (
                 <span className="text-green-500">
-                  +{sale.total_in_cents} R$
+                  +{sale.total_in_cents / 100} R$
                 </span>
               ) : (
-                <span className="text-red-500">-{sale.total_in_cents} R$</span>
+                <span className="text-red-500">
+                  -{sale.total_in_cents / 100} R$
+                </span>
               )}
             </div>
           </div>
