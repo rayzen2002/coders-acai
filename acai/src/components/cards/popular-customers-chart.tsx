@@ -1,6 +1,6 @@
 'use client'
 import { BarChart as BarChartIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -45,17 +45,32 @@ const data = [
   },
 ]
 export default function PopularCustomersChart() {
+  const [customers, setCustomers] = useState([])
   const [isChecked, setIsChecked] = useState(false)
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked) // Toggle the state
+    setIsChecked(!isChecked)
   }
+  try {
+    useEffect(() => {
+      fetch(`${process.env.NEXT_PUBLIC_API_KEY}/customers-card`)
+        .then((data) => {
+          return data.json()
+        })
+        .then((customers) => {
+          setCustomers(customers)
+        })
+    }, [])
+  } catch (error) {
+    console.error(error)
+  }
+  console.log(customers)
   return (
     <Card className="col-span-3">
       <CardHeader className="pb-8">
         <div className="grid grid-cols-2"></div>
         <div className="flex items-center justify-between ">
           <CardTitle className="text-base font-medium">
-            Clientes populares
+            Clientes populares do mês
           </CardTitle>
           <div className="flex gap-1">
             <div className="flex gap-2">
@@ -74,16 +89,22 @@ export default function PopularCustomersChart() {
         <ResponsiveContainer width="100%" height={240}>
           <BarChart
             style={{ fontSize: 12 }}
-            data={data}
+            data={customers}
             margin={{
               top: 5,
-              right: 30,
-              left: 20,
+              right: 0,
+              left: 0,
               bottom: 5,
             }}
           >
             <CartesianGrid className="stroke-slate-600" />
-            <XAxis dataKey="name" tickLine={false} axisLine={false} dy={16} />
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              axisLine={false}
+              dy={16}
+              fontSize={12}
+            />
             <YAxis
               stroke="#888"
               axisLine={false}
