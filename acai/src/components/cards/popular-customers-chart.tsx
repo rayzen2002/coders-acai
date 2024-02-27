@@ -63,7 +63,6 @@ export default function PopularCustomersChart() {
   } catch (error) {
     console.error(error)
   }
-  console.log(customers)
   return (
     <Card className="col-span-3">
       <CardHeader className="pb-8">

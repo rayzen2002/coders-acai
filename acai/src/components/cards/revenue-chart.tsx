@@ -55,7 +55,6 @@ export default function RevenueChart() {
 
     setFilteredOrders(filteredOrders)
   }, [selectedDateRange, statistics])
-  console.log(filteredOrders)
   const [isChecked, setIsChecked] = useState(false)
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked)
