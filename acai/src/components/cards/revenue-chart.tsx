@@ -93,7 +93,13 @@ export default function RevenueChart() {
             data={filteredOrders.length > 2 ? filteredOrders : statistics}
             style={{ fontSize: 12 }}
           >
-            <XAxis dataKey="date" tickLine={false} axisLine={false} dy={16} />
+            <XAxis
+              dataKey="date"
+              tickFormatter={(date) => dayjs(date).format('DD/MM/YYYY')}
+              tickLine={false}
+              axisLine={false}
+              dy={16}
+            />
             <YAxis
               stroke="#888"
               axisLine={false}
