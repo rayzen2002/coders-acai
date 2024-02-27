@@ -25,6 +25,7 @@ import { createOrder } from './routes/create-orders'
 import { createOrderItems } from './routes/create-order-items'
 import { getMonthTotalRevenue } from './routes/get-months-revenue'
 import getCustomerCard from './routes/get-customer-card'
+import { getProductsCard } from './routes/get-products-card'
 
 dotenv.config()
 export const server = fastify({ logger: true })
@@ -71,6 +72,7 @@ server.register(getOrders)
 server.register(deleteOrder)
 server.register(createOrderItems)
 server.register(getCustomerCard)
+server.register(getProductsCard)
 
 server.register(getMonthTotalRevenue)
 console.log('Server initialization started.') // Add logging statement

@@ -1,6 +1,7 @@
 'use client'
 
 import { BarChart } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import colors from 'tailwindcss/colors'
 
@@ -13,29 +14,23 @@ const COLORS = [
   colors.emerald['500'],
   colors.rose['500'],
 ]
-const data = [
-  {
-    product: 'Açai A',
-    amount: 10,
-  },
-  {
-    product: 'Açai B',
-    amount: 40,
-  },
-  {
-    product: 'Açai C',
-    amount: 30,
-  },
-  {
-    product: 'Açai D',
-    amount: 80,
-  },
-  {
-    product: 'Açai E',
-    amount: 25,
-  },
-]
+interface Products {
+  product: string
+  amount: number
+}
 export default function PopularProductsChart() {
+  const [products, setProducts] = useState<Products[]>([])
+  try {
+    useEffect(() => {
+      fetch(`${process.env.NEXT_PUBLIC_API_KEY}/products-card`)
+        .then((data) => {
+          return data.json()
+        })
+        .then((products) => {
+          setProducts(products)
+        })
+    }, [])
+  } catch (error) {}
   return (
     <Card className="col-span-3">
       <CardHeader className="pb-8">
@@ -50,7 +45,7 @@ export default function PopularProductsChart() {
         <ResponsiveContainer width="100%" height={240}>
           <PieChart style={{ fontSize: 12 }}>
             <Pie
-              data={data}
+              data={products}
               dataKey="amount"
               nameKey="product"
               cx="50%"
@@ -81,15 +76,15 @@ export default function PopularProductsChart() {
                     textAnchor={x > cx ? 'start' : 'end'}
                     dominantBaseline="central"
                   >
-                    {data[index].product.length > 12
-                      ? data[index].product.substring(0, 12).concat('...')
-                      : data[index].product}{' '}
+                    {products[index].product.length > 10
+                      ? products[index].product.substring(0, 10).concat('...')
+                      : products[index].product}{' '}
                     ({value})
                   </text>
                 )
               }}
             >
-              {data.map((_, index) => {
+              {products.map((_, index) => {
                 return (
                   <Cell
                     key={`cell-${index}`}
