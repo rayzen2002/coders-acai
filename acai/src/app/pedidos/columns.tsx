@@ -57,6 +57,7 @@ export type Orders = {
   orderItem: OrderItems[]
   customer: Customer
   createdAt: Date
+  type: string
 }
 const getProducts = (productId: string) => {
   return fetch(`${process.env.NEXT_PUBLIC_API_KEY}/products/${productId}`, {

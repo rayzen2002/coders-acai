@@ -1,5 +1,7 @@
 'use client'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
+import { DateRange } from 'react-day-picker'
 import {
   CartesianGrid,
   Line,
@@ -19,41 +21,13 @@ import {
 } from '../ui/card'
 import { DatePickerWithRange } from '../ui/date-range-picker'
 import { Label } from '../ui/label'
-
-const data = [
-  {
-    date: '05/02/2024',
-    revenue: 1000,
-    cost: 750,
-  },
-  {
-    date: '06/02/2024',
-    revenue: 1500,
-    cost: 800,
-  },
-  {
-    date: '07/02/2024',
-    revenue: 800,
-    cost: 1200,
-  },
-  {
-    date: '08/02/2024',
-    revenue: 2500,
-    cost: 1500,
-  },
-  {
-    date: '09/02/2024',
-    revenue: 700,
-    cost: 500,
-  },
-  {
-    date: '10/02/2024',
-    revenue: 500,
-    cost: 1800,
-  },
-]
+interface Statitics {
+  date: string
+  revenue: number
+  cost: number
+}
 export default function RevenueChart() {
-  const [statistics, setStatistics] = useState([])
+  const [statistics, setStatistics] = useState<Statitics[]>([])
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_KEY}/metrics/month-revenue`)
       .then((data) => {
@@ -63,10 +37,30 @@ export default function RevenueChart() {
         setStatistics(statistics)
       })
   }, [])
+  const [filteredOrders, setFilteredOrders] = useState<Statitics[]>([])
+  const [selectedDateRange, setSelectedDateRange] = useState<
+    DateRange | undefined
+  >()
+  const onDateRangeChange = (dateRange: DateRange | undefined) => {
+    setSelectedDateRange(dateRange)
+  }
+  useEffect(() => {
+    if (!selectedDateRange) return
+
+    const filteredOrders = statistics.filter(
+      (order) =>
+        dayjs(order.date).isAfter(dayjs(selectedDateRange.from)) &&
+        dayjs(order.date).isBefore(dayjs(selectedDateRange.to)),
+    )
+
+    setFilteredOrders(filteredOrders)
+  }, [selectedDateRange, statistics])
+  console.log(filteredOrders)
   const [isChecked, setIsChecked] = useState(false)
   const handleCheckboxChange = () => {
-    setIsChecked(!isChecked) // Toggle the state
+    setIsChecked(!isChecked)
   }
+
   return (
     <Card className="col-span-6">
       <CardHeader className="flex-row items-center justify-between pb-8">
@@ -80,7 +74,7 @@ export default function RevenueChart() {
           <div className="flex items-center gap-2">
             <Label className="text-muted-foreground">Período</Label>
 
-            <DatePickerWithRange />
+            <DatePickerWithRange onDateRangeChange={onDateRangeChange} />
           </div>
           <input
             type="checkbox"
@@ -91,12 +85,14 @@ export default function RevenueChart() {
           <Label htmlFor="costs" className="text-muted-foreground">
             Mostrar despesas
           </Label>
-          {/* <DateRangePicker /> */}
         </div>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={240}>
-          <LineChart data={statistics} style={{ fontSize: 12 }}>
+          <LineChart
+            data={filteredOrders.length > 2 ? filteredOrders : statistics}
+            style={{ fontSize: 12 }}
+          >
             <XAxis dataKey="date" tickLine={false} axisLine={false} dy={16} />
             <YAxis
               stroke="#888"

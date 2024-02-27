@@ -17,7 +17,7 @@ export default function DayOrdersAmountCard() {
           <p className="text-xs text-muted-foreground">
             <span className="text-emerald-500 dark:text-emerald-400">+66%</span>
             {'  '}
-            em relação ao mês passado
+            em relação a ontem
           </p>
         </CardContent>
       </Card>

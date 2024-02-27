@@ -1,62 +1,47 @@
 import { SmilePlus, User } from 'lucide-react'
+import { useEffect, useState } from 'react'
+
+import { Orders } from '@/app/pedidos/columns'
 
 export function RecentSales() {
+  const [sales, setSales] = useState<Orders[]>([])
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_KEY}/orders`)
+      .then((data) => {
+        return data.json()
+      })
+      .then((sales) => {
+        setSales(sales.orders)
+      })
+  }, [])
   return (
     <div className="space-y-8">
-      <div className="flex items-center">
-        <User className="h-9 w-9">
-          <SmilePlus />
-        </User>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Olivia Martin</p>
-          <p className="text-sm text-muted-foreground">
-            olivia.martin@email.com
-          </p>
-        </div>
-        <div className="ml-auto font-medium">+$1,999.00</div>
-      </div>
-      <div className="flex items-center">
-        <User className="flex h-9 w-9 items-center justify-center space-y-0 border">
-          <SmilePlus />
-        </User>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Jackson Lee</p>
-          <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$39.00</div>
-      </div>
-      <div className="flex items-center">
-        <User className="h-9 w-9">
-          <SmilePlus />
-        </User>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-          <p className="text-sm text-muted-foreground">
-            isabella.nguyen@email.com
-          </p>
-        </div>
-        <div className="ml-auto font-medium">+$299.00</div>
-      </div>
-      <div className="flex items-center">
-        <User className="h-9 w-9">
-          <SmilePlus />
-        </User>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">William Kim</p>
-          <p className="text-sm text-muted-foreground">will@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$99.00</div>
-      </div>
-      {/* <div className="flex items-center">
-        <User className="h-9 w-9">
-          <SmilePlus />
-        </User>
-        <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none">Sofia Davis</p>
-          <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-        </div>
-        <div className="ml-auto font-medium">+$39.00</div>
-      </div> */}
+      {sales.slice(0, 4).map((sale) => {
+        return (
+          <div key={sale.id} className="flex items-center">
+            <User className="h-9 w-9">
+              <SmilePlus />
+            </User>
+            <div className="ml-4 space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {sale.customer.name}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {sale.customer.email}
+              </p>
+            </div>
+            <div className="ml-auto font-medium">
+              {sale.type === 'Sell' ? (
+                <span className="text-green-500">
+                  +{sale.total_in_cents} R$
+                </span>
+              ) : (
+                <span className="text-red-500">-{sale.total_in_cents} R$</span>
+              )}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
