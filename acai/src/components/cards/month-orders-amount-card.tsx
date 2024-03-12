@@ -29,10 +29,12 @@ export default function MonthOrdersAmountCard() {
   const lastMonth = monthRevenue.filter((order) => {
     return dayjs(order.date).month() === dayjs().month() - 1
   })
+
   const diff =
     ((actualMonth.length - lastMonth.length) /
       (actualMonth.length + lastMonth.length)) *
     100
+
   return (
     <>
       <Card>
@@ -49,7 +51,7 @@ export default function MonthOrdersAmountCard() {
           <p className="text-xs text-muted-foreground">
             {diff > 0 ? (
               <span className="text-emerald-500 dark:text-emerald-400">
-                {diff}%
+                {diff.toFixed(2)}%
               </span>
             ) : (
               <span className="text-red-500 dark:text-emerald-400">

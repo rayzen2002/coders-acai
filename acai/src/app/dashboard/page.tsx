@@ -1,9 +1,8 @@
 'use client'
 import { FileText } from 'lucide-react'
+import { useState } from 'react'
 import { DateRange } from 'react-day-picker'
 
-import DayOrdersAmountCard from '@/components/cards/day-orders-amount-card'
-import MonthCanceledOrdersAmountCard from '@/components/cards/month-canceled-orders-amount-card'
 import MonthOrdersAmountCard from '@/components/cards/month-orders-amount-card'
 import MonthRevenueCard from '@/components/cards/month-revenue-card'
 import PopularCustomersChart from '@/components/cards/popular-customers-chart'
@@ -16,7 +15,11 @@ import { DatePickerWithRange } from '@/components/ui/date-range-picker'
 import { pdfCreator } from '@/lib/pdf/generate-pdf'
 
 export default function Dashboard() {
-  function onDateRangeChange(dateRange: DateRange | undefined) {
+  const [selectedDateRange, setSelectedDateRange] = useState<
+    DateRange | undefined
+  >()
+  const onDateRangeChange = (dateRange: DateRange | undefined) => {
+    setSelectedDateRange(dateRange)
     console.log(dateRange)
   }
   return (
@@ -28,7 +31,11 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold tracking-tight">Estatísticas </h1>
             <div className="flex gap-2">
               <DatePickerWithRange onDateRangeChange={onDateRangeChange} />
-              <Button variant="outline" className="gap-2" onClick={pdfCreator}>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => pdfCreator(selectedDateRange)}
+              >
                 <FileText className="w-4 h-4" />
                 Download
               </Button>

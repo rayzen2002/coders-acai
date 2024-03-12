@@ -6,6 +6,7 @@ import axios from 'axios'
 
 export async function createOrder(server: FastifyInstance) {
   server.post('/order', { preHandler: [auth] }, async (req, res) => {
+    console.log(process.env.API_LINK)
     const orderSchema = z.object({
       customerName: z.string(),
       orderItems: z.array(
@@ -29,6 +30,7 @@ export async function createOrder(server: FastifyInstance) {
     try {
       const order = await prisma.orders.create({
         data: {
+          type: 'Sell',
           customerId: customer.id,
           total_in_cents: 0,
         },
@@ -60,7 +62,7 @@ export async function createOrder(server: FastifyInstance) {
       Promise.all(
         orderItemsBodies.map((orderItemsBody) => {
           return axios.post(
-            `https://coders-acai-pm2c.vercel.app/order-item`,
+            `${process.env.API_LINK}/order-item`,
             orderItemsBody,
           )
         }),
@@ -82,9 +84,11 @@ export async function createOrder(server: FastifyInstance) {
           total_in_cents: totalInCents,
         },
       })
+
       return res.status(201).send({ id: orderResponse.id })
     } catch (error) {
       console.error(error)
+
       res.status(409)
     }
   })

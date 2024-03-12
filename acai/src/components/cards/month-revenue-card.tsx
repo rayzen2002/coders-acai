@@ -7,6 +7,7 @@ interface MonthRevenue {
   revenue: number
   month: string
   year: string
+  cost: number
 }
 export default function MonthRevenueCard() {
   const [monthRevenue, setMonthRevenue] = useState<MonthRevenue[]>([])
@@ -21,9 +22,12 @@ export default function MonthRevenueCard() {
   }, [])
   if (monthRevenue[0]) {
     const percentualAgainstLastMonth: number =
-      100 *
-      ((monthRevenue[0]?.revenue - monthRevenue[1]?.revenue) /
-        monthRevenue[1]?.revenue)
+      (100 *
+        (monthRevenue[1]?.revenue -
+          monthRevenue[1]?.cost -
+          monthRevenue[0]?.revenue +
+          monthRevenue[0].cost)) /
+      (monthRevenue[0]?.revenue - monthRevenue[0].cost)
     return (
       <>
         <Card>
@@ -35,7 +39,13 @@ export default function MonthRevenueCard() {
           </CardHeader>
           <CardContent className="space-y-1">
             <span className="text-2xl font-bold tracking-tight">
-              R$ {monthRevenue[0]?.revenue}
+              {monthRevenue[1].revenue > 0 ? (
+                <span>R$ {monthRevenue[1]?.revenue} </span>
+              ) : (
+                <span className="text-red-600">
+                  - {monthRevenue[1].cost} R$
+                </span>
+              )}
             </span>
             <p className="text-xs text-muted-foreground">
               <span>

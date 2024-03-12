@@ -73,11 +73,13 @@ export async function GetMonthTotalRevenue(server: FastifyInstance) {
       }
 
       const month1Data = ordersFromThisMonth
-        .filter((entry) => new Date(entry.date).getMonth() === 0)
+        .filter((entry) => new Date(entry.date).getMonth() === dayjs().month())
         .reduce(sumReducer, { revenue: 0, cost: 0 })
 
       const month2Data = ordersFromThisMonth
-        .filter((entry) => new Date(entry.date).getMonth() === 1)
+        .filter(
+          (entry) => new Date(entry.date).getMonth() === dayjs().month() - 1,
+        )
         .reduce(sumReducer, { revenue: 0, cost: 0 })
 
       const response = [month2Data, month1Data]

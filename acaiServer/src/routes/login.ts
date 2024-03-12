@@ -43,7 +43,7 @@ export async function loginRoute(server: FastifyInstance) {
         httpOnly: true,
         domain: 'localhost',
         sameSite: 'none',
-        secure: true, // Change to true if running over HTTPS
+        secure: false, // Change to true if running over HTTPS
         path: '/',
       })
     } catch (error) {

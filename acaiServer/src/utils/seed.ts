@@ -97,6 +97,25 @@ const seedDatabase = async () => {
   console.log(chalk.yellow('✔ Created Groups'))
 
   const groups = await prisma.groups.findMany()
+  const adminGroup = await prisma.groups.create({
+    data: {
+      groupName: 'admin',
+      levelOfAccess: 5,
+    },
+  })
+  await prisma.user.create({
+    data: {
+      username: 'admin',
+      password: 'admin',
+      groups: {
+        create: {
+          assignedBy: 'admin',
+          groups: { connect: { id: adminGroup.id } },
+        },
+      },
+    },
+  })
+
   for (let j = 0; j < randomUsers.length; j++) {
     const user = randomUsers[j]
     const group = groups[j]
