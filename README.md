@@ -6,7 +6,7 @@
 ![Bitbucket open issues](https://img.shields.io/bitbucket/issues/iuricode/README-template?style=for-the-badge)
 ![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/iuricode/README-template?style=for-the-badge)
 
-<img src="public/dash.png" alt="Dashboard printscreen">
+<img src="public/gif.gif" alt="Dashboard printscreen">
 
 >Software backoffice de gestão de um negócio de Açai, com controle de compras, vendas, estatísticas e relatórios.
 ### Ajustes e melhorias
